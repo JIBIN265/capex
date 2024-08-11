@@ -1,0 +1,181 @@
+_schema-version: "3.1"
+ID: capex
+description: Supplier Invoice
+version: 1.0.0
+modules:
+- name: capex-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: capex-db
+  - name: capex-auth
+  - name: capex-logs
+  - name: capex-connectivity
+  - name: capex-destination-service
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    readiness-health-check-http-endpoint: /health
+    readiness-health-check-type: http
+  build-parameters:
+    builder: npm
+- name: capex-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: capex-db
+  - name: capex-logs
+  parameters:
+    buildpack: nodejs_buildpack
+- name: capex-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: capex-destination-service
+    parameters:
+      content-target: true
+  - name: capex-repo-host
+    parameters:
+      service-key:
+        name: capex-repo-host-key
+  - name: capex-auth
+    parameters:
+      service-key:
+        name: uaa_capex-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: hana_app_capex_repo_host
+          ServiceInstanceName: capex-html5-srv
+          ServiceKeyName: capex-repo-host-key
+          sap.cloud.service: hana.app
+        - Authentication: OAuth2UserTokenExchange
+          Name: hana_app_uaa_capex
+          ServiceInstanceName: capex-xsuaa-service
+          ServiceKeyName: uaa_capex-key
+          sap.cloud.service: hana.app
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: capex-router
+  type: approuter.nodejs
+  path: app/router
+  requires:
+  - name: srv-api
+    group: destinations
+    properties:
+      forwardAuthToken: true
+      name: srv-api
+      url: ~{srv-url}
+  - name: capex-auth
+  - name: capex-destination-service
+    group: destinations
+    properties:
+      forwardAuthToken: false
+      name: ui5
+      url: https://ui5.sap.com
+  parameters:
+    disk-quota: 256M
+    keep-existing-routes: true
+    memory: 256M
+  build-parameters:
+    ignore:
+    - .env
+    - node_modules/
+    - default-env.json
+- name: capex-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: capex-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - capex.zip
+      name: capex
+      target-path: resources/
+- name: capex
+  type: html5
+  path: app/capex
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: capex-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+- name: capex-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: capex-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: capex-xsuaa-service
+    service-plan: application
+- name: capex-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            Name: capex-srv
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: capex-destination-service
+    service-plan: lite
+  requires:
+  - name: srv-api
+- name: capex-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: capex-html5-srv
+    service-plan: app-host
+- name: capex-logs
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: application-logs
+    service-plan: lite
+- name: capex-connectivity
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: connectivity
+    service-plan: lite
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production
+    - npx rimraf gen/db/src/gen/data
