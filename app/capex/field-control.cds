@@ -45,7 +45,7 @@ annotate service.CashFlowYear {
     ID          @readonly                @mandatory  @UI.ExcludeFromNavigationContext; //don't hide display text only
 
 
-    total       @Core.Computed;
+   // total       @Core.Computed;
     // description_custom     @Core.Computed           @UI.HiddenFilter: true  @UI.ExcludeFromNavigationContext;
 
     createdAt   @UI.HiddenFilter: false  @UI.ExcludeFromNavigationContext;

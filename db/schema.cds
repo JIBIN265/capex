@@ -207,8 +207,8 @@ aspect Objectives : cuid, managed {
   // @UoM.Unit   : '%'
   objectiveTarget : Decimal(5, 2); // ZZOTTARGE3
 
-  // @description: 'Unit'
-  // unit            : UnitOfMeasure default '%';
+   @description: 'Filled'
+  filled            : Boolean;
 
   @description: 'Impact'
   impact          : Boolean; // ZZOTIMPAC3
@@ -245,4 +245,23 @@ aspect RejectionReasons : cuid, managed {
   reason : String(1000); // ZZ4CASHFLQ1
 
 
+}
+
+entity Sustainability2030 : cuid, managed {
+
+  @description: 'Objective'
+  objective       : String(20); // ZZOTOBJEC3
+
+  @description: 'Target'
+  // @UoM.Unit   : '%'
+  objectiveTarget : Decimal(5, 2); // ZZOTTARGE3
+
+   @description: 'Filled'
+   filled            : Boolean;
+
+  @description: 'Impact'
+  impact          : Boolean; // ZZOTIMPAC3
+
+  @description: 'Amount'
+  amount          : String(50); // ZZOTAMOUN3
 }

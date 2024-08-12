@@ -49,6 +49,12 @@
       "bypass_draft": true
     },
     "requires": {
+      "JIBIN_WORKFLOW": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "JIBIN_WORKFLOW"
+        }
+      },
       "[development]": {
         "kind": "sqlite",
         "auth": "dummy",

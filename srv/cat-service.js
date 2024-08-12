@@ -15,6 +15,7 @@ class CapexCatalogService extends cds.ApplicationService {
             Site,
             Division,
             BusinessReason,
+            Sustainability2030
         } = this.entities;
 
         const db = await cds.connect.to("db");
@@ -38,13 +39,57 @@ class CapexCatalogService extends cds.ApplicationService {
             });
 
             let number = await documentID.getNextNumber();
-            req.data.documentID = number.toString();;
+            req.data.documentID = number.toString();
 
+            const records = await db.run(SELECT.from(Sustainability2030));
+            console.log(records);
+            req.data.to_Objectives = records;
         });
 
 
-        this.after('UPDATE', "Capex.drafts", async (req) => {
+        this.before('UPDATE', Capex.drafts, async (req) => {
             console.log("UPDATE Capex.drafts:");
+            const {
+                ID,
+                millLabor,
+                maintenanceLabor,
+                operationsLabor,
+                outsideContract,
+                materialCost,
+                hardwareCost,
+                softwareCost,
+                contingencyCost,
+            } = req.data;
+
+            // Initialize total to 0
+            let total = 0;
+            const record = await db.run(SELECT.one.from(Capex.drafts).where({ ID: ID }));
+            console.log(record);
+            if (record) {
+                // Use existing values from the record if any of the new values are undefined
+                const existingMillLabor = millLabor !== undefined ? Number(millLabor) : Number(record.millLabor);
+                const existingMaintenanceLabor = maintenanceLabor !== undefined ? Number(maintenanceLabor) : Number(record.maintenanceLabor);
+                const existingOperationsLabor = operationsLabor !== undefined ? Number(operationsLabor) : Number(record.operationsLabor);
+                const existingOutsideContract = outsideContract !== undefined ? Number(outsideContract) : Number(record.outsideContract);
+                const existingMaterialCost = materialCost !== undefined ? Number(materialCost) : Number(record.materialCost);
+                const existingHardwareCost = hardwareCost !== undefined ? Number(hardwareCost) : Number(record.hardwareCost);
+                const existingSoftwareCost = softwareCost !== undefined ? Number(softwareCost) : Number(record.softwareCost);
+                const existingContingencyCost = contingencyCost !== undefined ? Number(contingencyCost) : Number(record.contingencyCost);
+                // Calculate total
+                total = existingMillLabor + existingMaintenanceLabor + existingOperationsLabor + existingOutsideContract +
+                    existingMaterialCost + existingHardwareCost + existingSoftwareCost + existingContingencyCost;
+
+                if (total) {
+                    await db.run(
+                        UPDATE(Capex.drafts)
+                            .set({ totalCost: total })
+                            .where({ ID: ID }))  // Using the current ID}
+                }
+            }
+
+            console.log("new total", total)
+            req.data.totalCost = total;
+            console.log(req.data)
 
         });
 
@@ -75,6 +120,7 @@ class CapexCatalogService extends cds.ApplicationService {
 
             const {
                 ID,
+                year,
                 cashFlowQOne,
                 cashFlowQTwo,
                 cashFlowQThree,
@@ -90,9 +136,17 @@ class CapexCatalogService extends cds.ApplicationService {
                 const existingCashFlowQTwo = cashFlowQTwo !== undefined ? Number(cashFlowQTwo) : Number(record.cashFlowQTwo);
                 const existingCashFlowQThree = cashFlowQThree !== undefined ? Number(cashFlowQThree) : Number(record.cashFlowQThree);
                 const existingCashFlowQFour = cashFlowQFour !== undefined ? Number(cashFlowQFour) : Number(record.cashFlowQFour);
+                const existingyear = year !== undefined ? Number(year) : Number(record.year);
 
                 // Calculate total
                 total = existingCashFlowQOne + existingCashFlowQTwo + existingCashFlowQThree + existingCashFlowQFour;
+
+                if (total) {
+                    await db.run(
+                        UPDATE(CashFlowYear.drafts)
+                            .set({ total: total })
+                            .where({ ID: ID }))  // Using the current ID}
+                }
             }
 
             console.log("new total", total)
@@ -135,6 +189,21 @@ class CapexCatalogService extends cds.ApplicationService {
             }
             console.log("Calculated total:", req.data.total);
         });
+
+        this.after('SAVE', Capex, async req => {
+            let testData = { "data": req.data }
+            let JIBIN_WORKFLOW = await cds.connect.to('JIBIN_WORKFLOW')
+            let response = await JIBIN_WORKFLOW.send('POST', '/', data);
+            if (response.status >= 200 && response.status < 300) {
+                debugger
+                console.log('Success:', response.data);
+
+            } else {
+                debugger
+                console.log('Error:', response.status, response.statusText);
+            }
+        });
+
         return super.init();
     }
 }

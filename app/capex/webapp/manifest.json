@@ -198,7 +198,20 @@
                     "selectAll": true,
                     "creationMode": {
                       "createAtEnd": true,
-                      "name": "InlineCreationRows"
+                      "name": "Inline"
+                    },
+                    "quickVariantSelection": {
+                      "paths": [
+                        {
+                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantAll"
+                        },
+                        {
+                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantActive"
+                        },
+                        {
+                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantExpired"
+                        }
+                      ]
                     }
                   }
                 }

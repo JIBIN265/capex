@@ -42,4 +42,6 @@ service CapexCatalogService @(requires: 'authenticated-user') {
     @readonly
     entity UnitOfMeasureCodeList as projection on common.UnitOfMeasureCodeList;
 
+    entity Sustainability2030     as projection on persistence.Sustainability2030;
+
 };
