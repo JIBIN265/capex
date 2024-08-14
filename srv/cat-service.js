@@ -200,6 +200,7 @@ class CapexCatalogService extends cds.ApplicationService {
             };
 
             let BPA_WORKFLOW = await cds.connect.to('BPA_WORKFLOW');
+            
             let response = await BPA_WORKFLOW.send('POST', '/', testData);
 
             if (response.status >= 200 && response.status < 300) {
