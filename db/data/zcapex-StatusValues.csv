@@ -1,11 +1,7 @@
-code;value;criticality;deletePossible;insertPossible;updatePossible
-Zulu;Quebec;405;false;false;false
-Kilo Sierra;Golf Kilo Echo;725;true;false;true
-Tango November;Sierra;104;true;false;false
-Quebec Victor;Kilo;478;false;true;false
-November;Charlie Whiskey Mike;433;false;false;true
-Sierra;Mike Echo Tango;677;true;true;true
-Whiskey;Kilo Mike;274;false;true;true
-Tango Alfa Uniform;Charlie Quebec Victor;412;true;true;false
-Lima Hotel;Whiskey India;926;false;false;false
-Whiskey Alfa Lima;Kilo;879;true;false;false
+code,value,criticality,deletePossible,insertPossible,updatePossible
+N,In Progress,5,true,true,true
+A,Approved,3,true,true,true
+X,Expired,0,false,false,false
+I,Rejection Incomplete,2,true,true,true
+R,Rejection Final,1,true,true,true
+D,Draft,4,true,true,true

@@ -8,6 +8,7 @@ annotate service.CashFlowYear @title: '{i18n>cashFlowYear}';
 
 annotate service.Capex with {
 
+    documentID            @title: '{i18n>documentID}'            @UI.Placeholder: '{i18n>placeHolderdocumentID}';
     orderNumber           @title: '{i18n>orderNumber}'           @UI.Placeholder: '{i18n>placeHolderOrderNumber}';
     orderType             @title: '{i18n>orderType}'             @UI.Placeholder: '{i18n>placeHolderOrderType}';
     companyCode           @title: '{i18n>companyCode}'           @UI.Placeholder: '{i18n>placeHolderCompanyCode}';
@@ -43,7 +44,7 @@ annotate service.Capex with {
     safetyImplications    @title: '{i18n>safetyImplications}'    @UI.Placeholder: '{i18n>placeHolderSafetyImplications}';
     creditPotential       @title: '{i18n>creditPotential}'       @UI.Placeholder: '{i18n>placeHolderCreditPotential}';
     insuranceApproval     @title: '{i18n>insuranceApproval}'     @UI.Placeholder: '{i18n>placeHolderInsuranceApproval}';
-    status                @title: '{i18n>status}'                @UI.Placeholder: '{i18n>placeHolderStatus}';
+    status                @title: '{i18n>status}'                @Common.Text   : to_Status.value  @Common.TextArrangement: #TextOnly;
 };
 
 annotate service.UnitOfMeasureCodeList with {

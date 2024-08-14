@@ -284,68 +284,6 @@ annotate service.Capex with @(
         createdBy,
         modifiedBy,
     ],
-    UI.LineItem                           : [
-        {
-            $Type: 'UI.DataField',
-            Value: orderNumber,
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: orderType,
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: companyCode,
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: site,
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: division,
-        },
-        {
-            $Type : 'UI.DataFieldForAction',
-            Action: 'CapexCatalogService.approve',
-            Label : '{i18n>Approve}',
-        },
-        {
-            $Type : 'UI.DataFieldForAction',
-            Action: 'CapexCatalogService.escalate',
-            Label : '{i18n>Escalate}',
-        },
-        {
-            $Type : 'UI.DataFieldForAction',
-            Action: 'CapexCatalogService.reject',
-            Label : '{i18n>Reject}',
-        },
-        {
-            $Type : 'UI.DataFieldForAction',
-            Action: 'CapexCatalogService.validate',
-            Label : '{i18n>Validate}',
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: businessReason,
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: amount,
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: createdBy,
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: createdAt,
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: status,
-        },
-    ],
     UI.SelectionPresentationVariant #table: {
         $Type              : 'UI.SelectionPresentationVariantType',
         PresentationVariant: {
@@ -481,11 +419,7 @@ annotate service.Capex with @(UI.HeaderFacets: [{
 ]);
 
 annotate service.Objectives with @(
-    UI.SelectionVariant #SelectionVariantAll    : {
-        Text         : 'All Objectives',
-        ID           : 'SelectionVariantAllID',
-        SelectOptions: [{PropertyName: filled}]
-    },
+
     UI.SelectionVariant #SelectionVariantActive : {
         ID           : 'SelectionVariantActiveID',
         Text         : 'Sustainability2030',
@@ -510,4 +444,80 @@ annotate service.Objectives with @(
             }, ],
         }, ],
     },
+    UI.SelectionVariant #SelectionVariantAll    : {
+        Text         : 'All Objectives',
+        ID           : 'SelectionVariantAllID',
+        SelectOptions: [{PropertyName: filled}]
+    },
+);
+
+annotate service.Capex with @(UI.LineItem: {
+    // #LineItemHighlight
+    ![@UI.Criticality]: to_Status.criticality, // Annotation, so that the row has a criticality
+    $value            : [
+        {
+            $Type: 'UI.DataField',
+            Value: documentID,
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: orderType,
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: companyCode,
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: site,
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: division,
+        },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'CapexCatalogService.approve',
+            Label : '{i18n>Approve}',
+        },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'CapexCatalogService.escalate',
+            Label : '{i18n>Escalate}',
+        },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'CapexCatalogService.reject',
+            Label : '{i18n>Reject}',
+        },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'CapexCatalogService.validate',
+            Label : '{i18n>Validate}',
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: businessReason,
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: amount,
+        },
+        {
+            $Type                    : 'UI.DataField',
+            Value                    : status,
+            Criticality              : to_Status.criticality, //Supported values 0,1,2,3,5
+            CriticalityRepresentation: #WithIcon,
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: createdBy,
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: createdAt,
+        },
+    ]
+},
+
 );

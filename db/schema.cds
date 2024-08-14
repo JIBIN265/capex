@@ -176,7 +176,7 @@ aspect CapexMain {
 
 entity StatusValues {
   key code           : String(1);
-      value          : String(10);
+      value          : String(20);
       criticality    : Integer;
       deletePossible : Boolean;
       insertPossible : Boolean;

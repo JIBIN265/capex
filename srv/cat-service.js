@@ -190,19 +190,27 @@ class CapexCatalogService extends cds.ApplicationService {
             console.log("Calculated total:", req.data.total);
         });
 
-        this.after('SAVE', Capex, async req => {
-            let testData = { "data": req.data }
-            let JIBIN_WORKFLOW = await cds.connect.to('JIBIN_WORKFLOW')
-            let response = await JIBIN_WORKFLOW.send('POST', '/', data);
-            if (response.status >= 200 && response.status < 300) {
-                debugger
-                console.log('Success:', response.data);
+        this.after('SAVE', Capex, async (_, req) => {
+            console.log(req.data);
+            let testData = {
+                "definitionId": "us10.yk2lt6xsylvfx4dz.zcapexworkflow.triggerWorkflow",
+                "context": {
+                    "documentId": req.data.documentID.toString()
+                }
+            };
 
+            let BPA_WORKFLOW = await cds.connect.to('BPA_WORKFLOW');
+            let response = await BPA_WORKFLOW.send('POST', '/', testData);
+
+            if (response.status >= 200 && response.status < 300) {
+                debugger;
+                console.log('Success:', response.data);
             } else {
-                debugger
+                debugger;
                 console.log('Error:', response.status, response.statusText);
             }
         });
+
 
         return super.init();
     }
