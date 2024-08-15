@@ -1,9 +1,10 @@
 using zcapex as persistence from '../db/schema';
 using {sap.common as common} from '../db/common';
+using {ZODATA_INTERNAL_ORDER_SRV as external} from './external/ZODATA_INTERNAL_ORDER_SRV';
 
 service CapexCatalogService @(requires: 'authenticated-user') {
 
-
+    entity Cot001Set as projection on external.Cot001Set;
     entity Capex                 as projection on persistence.CapexEntity
         actions {
             action validate() returns Capex;
@@ -42,6 +43,6 @@ service CapexCatalogService @(requires: 'authenticated-user') {
     @readonly
     entity UnitOfMeasureCodeList as projection on common.UnitOfMeasureCodeList;
 
-    entity Sustainability2030     as projection on persistence.Sustainability2030;
+    entity Sustainability2030    as projection on persistence.Sustainability2030;
 
 };

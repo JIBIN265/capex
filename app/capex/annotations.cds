@@ -1,7 +1,10 @@
 using CapexCatalogService as service from '../../srv/cat-service';
 using from '../../db/schema';
 
+
+
 annotate service.Capex with @(
+    
     UI.FieldGroup #General                : {
         $Type: 'UI.FieldGroupType',
         Data : [

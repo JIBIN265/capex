@@ -82,3 +82,10 @@ annotate service.Division with {
 annotate service.StatusValues with {
     code  @title: '{i18n>status}'  @Common.Text: value  @Common.TextArrangement: #TextOnly
 };
+
+
+annotate service.Cot001Set with {
+    Bukrs @title: '{i18n>companyCode}';
+    Butxt @title: '{i18n>companyCodeDescription}';
+    Waers @title: '{i18n>currency}'
+};

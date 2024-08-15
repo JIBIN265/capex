@@ -1,0 +1,267 @@
+{
+    "_version": "1.59.0",
+    "sap.app": {
+        "id": "capex",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "0.0.1"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "resources": "resources.json",
+        "sourceTemplate": {
+            "id": "@sap/generator-fiori:lrop",
+            "version": "1.14.3",
+            "toolsId": "fc159ce1-9e34-4214-a661-2c0d35fc6971"
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "odata/v4/capex-catalog/",
+                "type": "OData",
+                "settings": {
+                    "annotations": [],
+                    "odataVersion": "4.0"
+                }
+            }
+        },
+        "crossNavigation": {
+            "inbounds": {
+                "Zcapex-manage": {
+                    "semanticObject": "Zcapex",
+                    "action": "manage",
+                    "title": "{{flpTitle}}",
+                    "signature": {
+                        "parameters": {},
+                        "additionalParameters": "allowed"
+                    }
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "",
+            "favIcon": "",
+            "phone": "",
+            "phone@2": "",
+            "tablet": "",
+            "tablet@2": ""
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "extends": {
+            "extensions": {
+                "sap.ui.viewExtensions": {
+                    "sap.fe.templates.ListReport.ListReport": {
+                        "BeforeFacetExtension": {
+                            "className": "sap.ui.core.mvc.View",
+                            "viewName": "capex.ext.CustomImage",
+                            "type": "XML"
+                        }
+                    }
+                }
+            }
+        },
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.127.0",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {},
+                "sap.ushell": {},
+                "sap.fe.templates": {},
+                "sap.f": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "capex.i18n.i18n"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "preload": true,
+                "settings": {
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true
+                }
+            },
+            "@i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "uri": "i18n/i18n.properties"
+            }
+        },
+        "resources": {
+            "css": []
+        },
+        "routing": {
+            "config": {
+                "flexibleColumnLayout": {
+                    "defaultTwoColumnLayoutType": "TwoColumnsMidExpanded",
+                    "defaultThreeColumnLayoutType": "ThreeColumnsMidExpanded"
+                },
+                "routerClass": "sap.f.routing.Router"
+            },
+            "routes": [
+                {
+                    "pattern": ":?query:",
+                    "name": "CapexList",
+                    "target": [
+                        "CapexList"
+                    ]
+                },
+                {
+                    "pattern": "Capex({key}):?query:",
+                    "name": "CapexObjectPage",
+                    "target": [
+                        "CapexList",
+                        "CapexObjectPage"
+                    ]
+                },
+                {
+                    "pattern": "Capex({key})/to_CashFlowYear({key2}):?query:",
+                    "name": "CashFlowYearObjectPage",
+                    "target": [
+                        "CapexList",
+                        "CapexObjectPage",
+                        "CashFlowYearObjectPage"
+                    ]
+                }
+            ],
+            "targets": {
+                "CapexList": {
+                    "type": "Component",
+                    "id": "CapexList",
+                    "name": "sap.fe.templates.ListReport",
+                    "options": {
+                        "settings": {
+                            "contextPath": "/Capex",
+                            "variantManagement": "Page",
+                            "navigation": {
+                                "Capex": {
+                                    "detail": {
+                                        "route": "CapexObjectPage"
+                                    }
+                                }
+                            },
+                            "controlConfiguration": {
+                                "@com.sap.vocabularies.UI.v1.LineItem": {
+                                    "tableSettings": {
+                                        "type": "ResponsiveTable",
+                                        "enableExport": true,
+                                        "condensedTableLayout": true
+                                    },
+                                    "actions": {
+                                        "DataFieldForAction::CapexCatalogService.approve": {
+                                            "enableOnSelect": "multi"
+                                        }
+                                    }
+                                }
+                            },
+                            "defaultTemplateAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionPresentationVariant#table"
+                        }
+                    },
+                    "controlAggregation": "beginColumnPages",
+                    "contextPattern": ""
+                },
+                "CapexObjectPage": {
+                    "type": "Component",
+                    "id": "CapexObjectPage",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "editableHeaderContent": false,
+                            "contextPath": "/Capex",
+                            "navigation": {
+                                "to_CashFlowYear": {
+                                    "detail": {
+                                        "route": "CashFlowYearObjectPage"
+                                    }
+                                }
+                            },
+                            "controlConfiguration": {
+                                "to_CashFlowYear/@com.sap.vocabularies.UI.v1.LineItem#AnnualCashFlow": {
+                                    "tableSettings": {
+                                        "creationMode": {
+                                            "createAtEnd": true,
+                                            "name": "InlineCreationRows"
+                                        },
+                                        "selectAll": true,
+                                        "selectionMode": "Multi"
+                                    }
+                                },
+                                "to_Objectives/@com.sap.vocabularies.UI.v1.LineItem#Objectives": {
+                                    "tableSettings": {
+                                        "selectionMode": "Multi",
+                                        "condensedTableLayout": true,
+                                        "selectAll": true,
+                                        "creationMode": {
+                                            "createAtEnd": true,
+                                            "name": "Inline"
+                                        },
+                                        "quickVariantSelection": {
+                                            "paths": [
+                                                {
+                                                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantActive"
+                                                },
+                                                {
+                                                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantExpired"
+                                                },
+                                                {
+                                                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantAll"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "controlAggregation": "midColumnPages",
+                    "contextPattern": "/Capex({key})"
+                },
+                "CashFlowYearObjectPage": {
+                    "type": "Component",
+                    "id": "CashFlowYearObjectPage",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "editableHeaderContent": false,
+                            "contextPath": "/Capex/to_CashFlowYear"
+                        }
+                    },
+                    "controlAggregation": "endColumnPages",
+                    "contextPattern": "/Capex({key})/to_CashFlowYear({key2})"
+                }
+            }
+        },
+        "rootView": {
+            "viewName": "sap.fe.templates.RootContainer.view.Fcl",
+            "type": "XML",
+            "async": true,
+            "id": "appRootView"
+        }
+    },
+    "sap.fiori": {
+        "registrationIds": [],
+        "archeType": "transactional"
+    },
+    "sap.cloud": {
+        "public": true,
+        "service": "hana.app"
+    }
+}

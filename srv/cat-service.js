@@ -15,10 +15,17 @@ class CapexCatalogService extends cds.ApplicationService {
             Site,
             Division,
             BusinessReason,
-            Sustainability2030
+            Sustainability2030,
+            Cot001Set
         } = this.entities;
 
         const db = await cds.connect.to("db");
+
+        const ecc = await cds.connect.to('ZODATA_INTERNAL_ORDER_SRV');
+
+        this.on('READ', [Cot001Set], async req => {
+            return ecc.run(req.query);
+        });
 
         this.before("NEW", Capex.drafts, async (req) => {
 
@@ -200,7 +207,7 @@ class CapexCatalogService extends cds.ApplicationService {
             };
 
             let BPA_WORKFLOW = await cds.connect.to('BPA_WORKFLOW');
-            
+
             let response = await BPA_WORKFLOW.send('POST', '/', testData);
 
             if (response.status >= 200 && response.status < 300) {
