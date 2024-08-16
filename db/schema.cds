@@ -15,13 +15,22 @@ using {
   sap.common.Criticality
 } from '../db/common.cds';
 using {Attachments} from '@cap-js/attachments';
-//using {CE_PURCHASEORDER_0001 as external} from '../srv/external/CE_PURCHASEORDER_0001';
 
-// entity PurchaseOrder as
-//   projection on external.PurchaseOrder {
-//     key PurchaseOrder,
-//         CompanyCode
-//   };
+type messageImport {
+  @description: 'Notes'
+  notes : String(1000) default '';
+}
+
+type statusCount {
+  inProgressCount       : Integer;
+  Count                 : Integer;
+  rejectIncompleteCount : Integer;
+  draftCount            : Integer;
+  rejectFinalCount      : Integer;
+  approvedCount         : Integer;
+}
+
+
 aspect DocumentId {
   @description: 'Unique Document ID'
   documentID : Integer;
@@ -183,7 +192,7 @@ entity StatusValues {
       updatePossible : Boolean;
 }
 
-entity CapexEntity : cuid, managed, CapexMain, DocumentId {
+entity CapexEntity : cuid, managed, CapexMain, DocumentId, messageImport {
 
   @description: 'Cash Flow Year Composition'
   to_CashFlowYear     : Composition of many CashFlowYear;
@@ -207,8 +216,8 @@ aspect Objectives : cuid, managed {
   // @UoM.Unit   : '%'
   objectiveTarget : Decimal(5, 2); // ZZOTTARGE3
 
-   @description: 'Filled'
-  filled            : Boolean;
+  @description: 'Filled'
+  filled          : Boolean;
 
   @description: 'Impact'
   impact          : Boolean; // ZZOTIMPAC3
@@ -256,8 +265,8 @@ entity Sustainability2030 : cuid, managed {
   // @UoM.Unit   : '%'
   objectiveTarget : Decimal(5, 2); // ZZOTTARGE3
 
-   @description: 'Filled'
-   filled            : Boolean;
+  @description: 'Filled'
+  filled          : Boolean;
 
   @description: 'Impact'
   impact          : Boolean; // ZZOTIMPAC3

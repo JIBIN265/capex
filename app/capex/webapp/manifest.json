@@ -77,6 +77,9 @@
         "sap.ui.controllerExtensions": {
           "sap.fe.templates.ObjectPage.ObjectPageController#capex::CapexObjectPage": {
             "controllerName": "capex.ext.controller.CapexObjectPageCustom"
+          },
+          "sap.fe.templates.ListReport.ListReportController#capex::CapexList": {
+            "controllerName": "capex.ext.controller.CapexListReportCustom"
           }
         }
       }
@@ -358,20 +361,20 @@
                 }
               },
               "controlConfiguration": {
-                "@com.sap.vocabularies.UI.v1.FieldGroup#Descriptions": {
+                "@com.sap.vocabularies.UI.v1.FieldGroup#General2": {
                   "fields": {
-                      "DataField::description": {
-                          "formatOptions": {
-                              "textLinesDisplay": 1,
-                              "textMaxLines": "2",
-                              "textLinesEdit": 1,
-                              "textMaxLength": 80,
-                              "textMaxCharactersDisplay": 50,
-                              "textExpandBehaviorDisplay": "Popover"
-                          }
+                    "DataField::description": {
+                      "formatOptions": {
+                        "textLinesDisplay": 1,
+                        "textMaxLines": "2",
+                        "textLinesEdit": 1,
+                        "textMaxLength": 80,
+                        "textMaxCharactersDisplay": 50,
+                        "textExpandBehaviorDisplay": "Popover"
                       }
+                    }
                   }
-              },
+                },
                 "to_CashFlowYear/@com.sap.vocabularies.UI.v1.LineItem#AnnualCashFlow": {
                   "tableSettings": {
                     "creationMode": {

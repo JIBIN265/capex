@@ -4,7 +4,8 @@ using {ZODATA_INTERNAL_ORDER_SRV as external} from './external/ZODATA_INTERNAL_O
 
 service CapexCatalogService @(requires: 'authenticated-user') {
 
-    entity Cot001Set as projection on external.Cot001Set;
+    entity Cot001Set             as projection on external.Cot001Set;
+
     entity Capex                 as projection on persistence.CapexEntity
         actions {
             action validate() returns Capex;
@@ -44,5 +45,7 @@ service CapexCatalogService @(requires: 'authenticated-user') {
     entity UnitOfMeasureCodeList as projection on common.UnitOfMeasureCodeList;
 
     entity Sustainability2030    as projection on persistence.Sustainability2030;
+    function getMessages(Key : String(32)) returns persistence.messageImport;
+    function getStatusCount()              returns persistence.statusCount;
 
 };

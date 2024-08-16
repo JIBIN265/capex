@@ -21,3 +21,18 @@ annotate service.CashFlowYear @(Common: {SideEffects #pr_enabledChanged3: {
     ],
     TargetEntities  : ['']
 }});
+
+
+annotate service.Capex @(Common: {SideEffects #pr_enabledChanged: {
+    SourceProperties: [
+        millLabor,
+        maintenanceLabor,
+        operationsLabor,
+        outsideContract,
+        materialCost,
+        hardwareCost,
+        softwareCost,
+        contingencyCost,
+    ],
+    TargetProperties: ['totalCost']
+}});

@@ -54,6 +54,52 @@ class CapexCatalogService extends cds.ApplicationService {
         });
 
 
+        // this.before('UPDATE', Capex.drafts, async (req) => {
+        //     console.log("UPDATE Capex.drafts:");
+        //     const {
+        //         ID,
+        //         millLabor,
+        //         maintenanceLabor,
+        //         operationsLabor,
+        //         outsideContract,
+        //         materialCost,
+        //         hardwareCost,
+        //         softwareCost,
+        //         contingencyCost,
+        //     } = req.data;
+
+        //     // Initialize total to 0
+        //     let total = 0;
+        //     const record = await db.run(SELECT.one.from(Capex.drafts).where({ ID: ID }));
+        //     console.log(record);
+        //     if (record) {
+        //         // Use existing values from the record if any of the new values are undefined
+        //         const existingMillLabor = millLabor !== undefined ? Number(millLabor) : Number(record.millLabor);
+        //         const existingMaintenanceLabor = maintenanceLabor !== undefined ? Number(maintenanceLabor) : Number(record.maintenanceLabor);
+        //         const existingOperationsLabor = operationsLabor !== undefined ? Number(operationsLabor) : Number(record.operationsLabor);
+        //         const existingOutsideContract = outsideContract !== undefined ? Number(outsideContract) : Number(record.outsideContract);
+        //         const existingMaterialCost = materialCost !== undefined ? Number(materialCost) : Number(record.materialCost);
+        //         const existingHardwareCost = hardwareCost !== undefined ? Number(hardwareCost) : Number(record.hardwareCost);
+        //         const existingSoftwareCost = softwareCost !== undefined ? Number(softwareCost) : Number(record.softwareCost);
+        //         const existingContingencyCost = contingencyCost !== undefined ? Number(contingencyCost) : Number(record.contingencyCost);
+        //         // Calculate total
+        //         total = existingMillLabor + existingMaintenanceLabor + existingOperationsLabor + existingOutsideContract +
+        //             existingMaterialCost + existingHardwareCost + existingSoftwareCost + existingContingencyCost;
+
+        //         if (total) {
+        //             await db.run(
+        //                 UPDATE(Capex.drafts)
+        //                     .set({ totalCost: total })
+        //                     .where({ ID: ID }))  // Using the current ID}
+        //         }
+        //     }
+
+        //     console.log("new total", total)
+        //     req.data.totalCost = total;
+        //     console.log(req.data)
+
+        // });
+
         this.before('UPDATE', Capex.drafts, async (req) => {
             console.log("UPDATE Capex.drafts:");
             const {
@@ -66,12 +112,13 @@ class CapexCatalogService extends cds.ApplicationService {
                 hardwareCost,
                 softwareCost,
                 contingencyCost,
+                amount,
             } = req.data;
 
             // Initialize total to 0
             let total = 0;
             const record = await db.run(SELECT.one.from(Capex.drafts).where({ ID: ID }));
-            console.log(record);
+            //console.log(record);
             if (record) {
                 // Use existing values from the record if any of the new values are undefined
                 const existingMillLabor = millLabor !== undefined ? Number(millLabor) : Number(record.millLabor);
@@ -82,9 +129,15 @@ class CapexCatalogService extends cds.ApplicationService {
                 const existingHardwareCost = hardwareCost !== undefined ? Number(hardwareCost) : Number(record.hardwareCost);
                 const existingSoftwareCost = softwareCost !== undefined ? Number(softwareCost) : Number(record.softwareCost);
                 const existingContingencyCost = contingencyCost !== undefined ? Number(contingencyCost) : Number(record.contingencyCost);
+                const existingAmount = amount !== undefined ? Number(amount) : Number(record.amount);
+
                 // Calculate total
                 total = existingMillLabor + existingMaintenanceLabor + existingOperationsLabor + existingOutsideContract +
                     existingMaterialCost + existingHardwareCost + existingSoftwareCost + existingContingencyCost;
+
+                if (existingAmount < total) {
+                    req.warn(404, `Exceeded Total Amount`);
+                }
 
                 if (total) {
                     await db.run(
@@ -96,9 +149,55 @@ class CapexCatalogService extends cds.ApplicationService {
 
             console.log("new total", total)
             req.data.totalCost = total;
-            console.log(req.data)
+            // console.log(req.data)
 
         });
+
+        this.on('getStatusCount', async (req) => {
+            try {
+                debugger;
+
+                const statusKeys = ['N', 'X', 'I', 'D', 'R', 'A']; // Example status keys
+                const statusCount = await getStatusCounts(statusKeys);
+
+                return statusCount;
+            } catch (error) {
+                // Handle errors gracefully
+                console.error('Error in getErrorCount:', error.message);
+                // throw new Error('Failed to retrieve error count.');
+            }
+        });
+
+
+        async function getStatusCounts(keys) {
+            const keyMappings = {
+                'N': 'inProgressCount',
+                'X': 'Count',
+                'I': 'rejectIncompleteCount',
+                'D': 'draftCount',
+                'R': 'rejectFinalCount',
+                'A': 'approvedCount'
+            };
+
+            const statusCount = {};
+
+            const conditions = keys.map(key => `status = '${key}'`).join(' OR ');
+            const query = SELECT
+                .from(Capex)
+                .columns(['status', 'COUNT(*) AS count'])
+                .where(conditions)
+                .groupBy('status');
+
+            const results = await db.run(query);
+
+            results.forEach(result => {
+                const mappedKey = keyMappings[result.status];
+                statusCount[mappedKey] = result.count;
+            });
+
+            return statusCount;
+        }
+
 
         // this.after('UPDATE', CashFlowYear.drafts, async (_, req) => {
         //     console.log("UPDATE CashFlowYear.drafts:");
