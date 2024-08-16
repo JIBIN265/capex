@@ -12,8 +12,7 @@ annotate service.Capex {
     ID          @readonly                @mandatory  @UI.ExcludeFromNavigationContext; //don't hide display text only
 
     status      @Core.Computed;
-    totalCost   @Core.Computed @Measures.ISOCurrency:currency_code;
-
+    totalCost   @Core.Computed           @Measures.ISOCurrency: currency_code;
     // description_custom     @Core.Computed           @UI.HiddenFilter: true  @UI.ExcludeFromNavigationContext;
     description @UI.MultiLineText;
     createdAt   @UI.HiddenFilter: false  @UI.ExcludeFromNavigationContext;
@@ -44,8 +43,8 @@ annotate service.CashFlowYear {
     // ID                     @UI.Hidden               @readonly  @mandatory  @UI.ExcludeFromNavigationContext;
     ID          @readonly                @mandatory  @UI.ExcludeFromNavigationContext; //don't hide display text only
 
-
-   // total       @Core.Computed;
+    total       @readonly;
+    // total       @Core.Computed;
     // description_custom     @Core.Computed           @UI.HiddenFilter: true  @UI.ExcludeFromNavigationContext;
 
     createdAt   @UI.HiddenFilter: false  @UI.ExcludeFromNavigationContext;
@@ -55,5 +54,3 @@ annotate service.CashFlowYear {
 
 
 };
-
-

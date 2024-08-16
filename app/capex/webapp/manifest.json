@@ -3,7 +3,14 @@
   "sap.app": {
     "id": "capex",
     "type": "application",
-    "i18n": "i18n/i18n.properties",
+    "i18n": {
+      "bundleName": "capex.i18n.i18n",
+      "supportedLocales": [
+        "en",
+        "fr"
+      ],
+      "fallbackLocale": "en"
+    },
     "applicationVersion": {
       "version": "0.0.1"
     },
@@ -66,6 +73,11 @@
               "type": "XML"
             }
           }
+        },
+        "sap.ui.controllerExtensions": {
+          "sap.fe.templates.ObjectPage.ObjectPageController#capex::CapexObjectPage": {
+            "controllerName": "capex.ext.controller.CapexObjectPageCustom"
+          }
         }
       }
     },
@@ -88,7 +100,12 @@
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
-          "bundleName": "capex.i18n.i18n"
+          "bundleName": "capex.i18n.i18n",
+          "supportedLocales": [
+            "en",
+            "fr"
+          ],
+          "fallbackLocale": "en"
         }
       },
       "": {
@@ -150,6 +167,7 @@
           "options": {
             "settings": {
               "contextPath": "/Capex",
+              "enhanceI18n": "i18n/customI18N.properties",
               "variantManagement": "Page",
               "navigation": {
                 "Capex": {
@@ -158,11 +176,155 @@
                   }
                 }
               },
+              "initialLoad": "Enabled",
               "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.SelectionFields": {
+                  "showClearButton": true,
+                  "filterFields": {
+                    "modifiedAt": {
+                      "settings": {
+                        "operatorConfiguration": [
+                          {
+                            "path": "key",
+                            "equals": "TODAYXYDAYS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "LASTMINUTES",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "NEXTDAYS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "TODAYFROMTO",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "LASTDAYS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "LASTWEEKS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "LASTYEARS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "LASTMONTHS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "NEXTHOURS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "NEXTYEARS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "NEXTYEAR",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "LASTHOURS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "NEXTMINUTES",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "NEXTWEEK",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "NEXTWEEKS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "NEXTMONTH",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "NEXTMONTHS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "THISQUARTER",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "LASTQUARTER",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "LASTQUARTERS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "NEXTQUARTER",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "NEXTQUARTERS",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "QUARTER1",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "QUARTER2",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "QUARTER3",
+                            "exclude": true
+                          },
+                          {
+                            "path": "key",
+                            "equals": "QUARTER4",
+                            "exclude": true
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
                 "@com.sap.vocabularies.UI.v1.LineItem": {
                   "tableSettings": {
                     "type": "ResponsiveTable",
                     "enableExport": true,
+                    "selectAll": true,
+                    "enablePaste": true,
                     "condensedTableLayout": true
                   },
                   "actions": {
@@ -185,6 +347,8 @@
           "options": {
             "settings": {
               "editableHeaderContent": false,
+              "enhanceI18n": "i18n/customI18N.properties",
+              "showRelatedApps": true,
               "contextPath": "/Capex",
               "navigation": {
                 "to_CashFlowYear": {
@@ -194,6 +358,20 @@
                 }
               },
               "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.FieldGroup#Descriptions": {
+                  "fields": {
+                      "DataField::description": {
+                          "formatOptions": {
+                              "textLinesDisplay": 1,
+                              "textMaxLines": "2",
+                              "textLinesEdit": 1,
+                              "textMaxLength": 80,
+                              "textMaxCharactersDisplay": 50,
+                              "textExpandBehaviorDisplay": "Popover"
+                          }
+                      }
+                  }
+              },
                 "to_CashFlowYear/@com.sap.vocabularies.UI.v1.LineItem#AnnualCashFlow": {
                   "tableSettings": {
                     "creationMode": {

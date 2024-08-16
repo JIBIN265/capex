@@ -201,7 +201,7 @@ entity CapexEntity : cuid, managed, CapexMain, DocumentId {
 aspect Objectives : cuid, managed {
 
   @description: 'Objective'
-  objective       : String(20); // ZZOTOBJEC3
+  objective       : String(50); // ZZOTOBJEC3
 
   @description: 'Target'
   // @UoM.Unit   : '%'
@@ -250,7 +250,7 @@ aspect RejectionReasons : cuid, managed {
 entity Sustainability2030 : cuid, managed {
 
   @description: 'Objective'
-  objective       : String(20); // ZZOTOBJEC3
+  objective       : String(50); // ZZOTOBJEC3
 
   @description: 'Target'
   // @UoM.Unit   : '%'
