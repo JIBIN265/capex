@@ -16,16 +16,21 @@ class CapexCatalogService extends cds.ApplicationService {
             Division,
             BusinessReason,
             Sustainability2030,
-            Cot001Set
+            Cot001Set,
+            OrderTypeF4Set,
+            BusinessReasonF4Set,
+            DivisionF4Set,
+            SiteF4Set
         } = this.entities;
 
         const db = await cds.connect.to("db");
 
         const ecc = await cds.connect.to('ZODATA_INTERNAL_ORDER_SRV');
 
-        this.on('READ', [Cot001Set], async req => {
-            return ecc.run(req.query);
-        });
+        this.on('READ', [Cot001Set, OrderTypeF4Set, BusinessReasonF4Set,
+            DivisionF4Set, SiteF4Set], async req => {
+                return ecc.run(req.query);
+            });
 
         this.before("NEW", Capex.drafts, async (req) => {
 

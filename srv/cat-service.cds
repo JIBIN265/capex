@@ -5,6 +5,10 @@ using {ZODATA_INTERNAL_ORDER_SRV as external} from './external/ZODATA_INTERNAL_O
 service CapexCatalogService @(requires: 'authenticated-user') {
 
     entity Cot001Set             as projection on external.Cot001Set;
+    entity OrderTypeF4Set        as projection on external.OrderTypeF4Set;
+    entity BusinessReasonF4Set   as projection on external.BusinessReasonF4Set;
+    entity DivisionF4Set         as projection on external.DivisionF4Set;
+    entity SiteF4Set             as projection on external.SiteF4Set;
 
     entity Capex                 as projection on persistence.CapexEntity
         actions {
