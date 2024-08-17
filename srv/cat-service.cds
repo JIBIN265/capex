@@ -12,10 +12,15 @@ service CapexCatalogService @(requires: 'authenticated-user') {
 
     entity Capex                 as projection on persistence.CapexEntity
         actions {
-            action validate() returns Capex;
-            action approve()  returns Capex;
-            action reject()   returns Capex;
-            action escalate() returns Capex;
+            // @(
+            //     cds.odata.bindingparameter.name: '_it',
+            //     Common.SideEffects             : {TargetEntities: ['_it']}
+            // )
+            action copyCapex(in: $self) returns Capex;
+            action validate()  returns Capex;
+            action approve()   returns Capex;
+            action rejectFinal()    returns Capex;
+            action rejectIncomplete()  returns Capex;
         };
 
 

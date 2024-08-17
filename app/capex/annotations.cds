@@ -2,9 +2,8 @@ using CapexCatalogService as service from '../../srv/cat-service';
 using from '../../db/schema';
 
 
-
 annotate service.Capex with @(
-    
+
     UI.FieldGroup #General                : {
         $Type: 'UI.FieldGroupType',
         Data : [
@@ -272,12 +271,38 @@ annotate service.Capex with @(
             Target: 'to_Objectives/@UI.LineItem#Objectives',
         },
     ],
-    UI.Identification                     : [{
-        $Type      : 'UI.DataFieldForAction',
-        Action     : 'CapexCatalogService.validate',
-        Label      : 'validate',
-        Determining: true,
-    }, ],
+    UI.Identification                     : [
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'CapexCatalogService.validate',
+            Label : '{i18n>Validate}',
+            Inline: true,
+        // Determining: true,
+        },
+        {
+            $Type              : 'UI.DataFieldForAction',
+            Action             : 'CapexCatalogService.copyCapex',
+            Label              : '{i18n>Copy}',
+            ![@UI.IsCopyAction]: true, 
+        },
+        {
+            $Type      : 'UI.DataFieldForAction',
+            Action     : 'CapexCatalogService.approve',
+            Label      : '{i18n>Approve}', 
+            // Criticality: 3
+        },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'CapexCatalogService.rejectIncomplete',
+            Label : '{i18n>rejectIncomplete}',
+        },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'CapexCatalogService.rejectFinal',
+            Label : '{i18n>rejectFinal}',
+        },
+
+    ],
     UI.SelectionFields                    : [
         documentID,
         orderNumber,
@@ -485,18 +510,24 @@ annotate service.Capex with @(UI.LineItem: {
         },
         {
             $Type : 'UI.DataFieldForAction',
-            Action: 'CapexCatalogService.escalate',
-            Label : '{i18n>Escalate}',
+            Action: 'CapexCatalogService.rejectIncomplete',
+            Label : '{i18n>rejectIncomplete}',
         },
         {
             $Type : 'UI.DataFieldForAction',
-            Action: 'CapexCatalogService.reject',
-            Label : '{i18n>Reject}',
+            Action: 'CapexCatalogService.rejectFinal',
+            Label : '{i18n>rejectFinal}',
         },
         {
             $Type : 'UI.DataFieldForAction',
             Action: 'CapexCatalogService.validate',
             Label : '{i18n>Validate}',
+        },
+        {
+            $Type              : 'UI.DataFieldForAction',
+            Action             : 'CapexCatalogService.copyCapex',
+            Label              : '{i18n>Copy}',
+            ![@UI.IsCopyAction]: true,
         },
         {
             $Type: 'UI.DataField',

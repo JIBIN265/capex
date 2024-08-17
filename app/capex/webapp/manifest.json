@@ -331,8 +331,21 @@
                     "condensedTableLayout": true
                   },
                   "actions": {
+                    "MenuActions": {
+                      "text": "{i18n>reject}",
+                      "menu": [
+                        "DataFieldForAction::CapexCatalogService.rejectIncomplete",
+                        "DataFieldForAction::CapexCatalogService.rejectFinal"
+                      ]
+                    },
                     "DataFieldForAction::CapexCatalogService.approve": {
                       "enableOnSelect": "multi"
+                    },
+                    "DataFieldForAction::CapexCatalogService.copyCapex": {
+                      "enableOnSelect": "single",
+                      "afterExecution": {
+                        "enableAutoScroll": true
+                      }
                     }
                   }
                 }
@@ -406,6 +419,24 @@
                           "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantAll"
                         }
                       ]
+                    }
+                  }
+                }
+              },
+              "content": {
+                "header": {
+                  "actions": {
+                    "MenuActions": {
+                      "text": "{i18n>reject}",
+                      "menu": [
+                        "DataFieldForAction::CapexCatalogService.rejectIncomplete",
+                        "DataFieldForAction::CapexCatalogService.rejectFinal"
+                      ]
+                    },
+                    "DataFieldForAction::CapexCatalogService.copyCapex": {
+                      "afterExecution": {
+                        "enableAutoScroll": true
+                      }
                     }
                   }
                 }

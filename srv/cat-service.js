@@ -34,15 +34,13 @@ class CapexCatalogService extends cds.ApplicationService {
 
         this.before("NEW", Capex.drafts, async (req) => {
 
-            console.log(req.target.name)
-
-            console.log(process.env.COMPANYCODE)
             if (req.target.name !== "CapexCatalogService.Capex.drafts") { return; }
             const { ID } = req.data;
             req.data.status = process.env.DRAFTSTATUS;
-            req.data.companyCode = process.env.COMPANYCODE;
-            req.data.currency_code = process.env.CURRENCY;
-            console.log(req.data.to_CashFlowYear)
+            if (!req.data.companyCode) { req.data.companyCode = process.env.COMPANYCODE; }
+            if (!req.data.currency_code) { req.data.currency_code = process.env.CURRENCY; }
+            // req.data.currency_code = process.env.CURRENCY;
+
             const documentID = new SequenceHelper({
                 db: db,
                 sequence: "ZCAPEX_DOCUMENT_ID",
@@ -52,58 +50,13 @@ class CapexCatalogService extends cds.ApplicationService {
 
             let number = await documentID.getNextNumber();
             req.data.documentID = number.toString();
-
-            const records = await db.run(SELECT.from(Sustainability2030));
-            console.log(records);
-            req.data.to_Objectives = records;
+            if (!req.data.to_Objectives) {
+                const records = await db.run(SELECT.from(Sustainability2030));
+                req.data.to_Objectives = records;
+            }
         });
 
 
-        // this.before('UPDATE', Capex.drafts, async (req) => {
-        //     console.log("UPDATE Capex.drafts:");
-        //     const {
-        //         ID,
-        //         millLabor,
-        //         maintenanceLabor,
-        //         operationsLabor,
-        //         outsideContract,
-        //         materialCost,
-        //         hardwareCost,
-        //         softwareCost,
-        //         contingencyCost,
-        //     } = req.data;
-
-        //     // Initialize total to 0
-        //     let total = 0;
-        //     const record = await db.run(SELECT.one.from(Capex.drafts).where({ ID: ID }));
-        //     console.log(record);
-        //     if (record) {
-        //         // Use existing values from the record if any of the new values are undefined
-        //         const existingMillLabor = millLabor !== undefined ? Number(millLabor) : Number(record.millLabor);
-        //         const existingMaintenanceLabor = maintenanceLabor !== undefined ? Number(maintenanceLabor) : Number(record.maintenanceLabor);
-        //         const existingOperationsLabor = operationsLabor !== undefined ? Number(operationsLabor) : Number(record.operationsLabor);
-        //         const existingOutsideContract = outsideContract !== undefined ? Number(outsideContract) : Number(record.outsideContract);
-        //         const existingMaterialCost = materialCost !== undefined ? Number(materialCost) : Number(record.materialCost);
-        //         const existingHardwareCost = hardwareCost !== undefined ? Number(hardwareCost) : Number(record.hardwareCost);
-        //         const existingSoftwareCost = softwareCost !== undefined ? Number(softwareCost) : Number(record.softwareCost);
-        //         const existingContingencyCost = contingencyCost !== undefined ? Number(contingencyCost) : Number(record.contingencyCost);
-        //         // Calculate total
-        //         total = existingMillLabor + existingMaintenanceLabor + existingOperationsLabor + existingOutsideContract +
-        //             existingMaterialCost + existingHardwareCost + existingSoftwareCost + existingContingencyCost;
-
-        //         if (total) {
-        //             await db.run(
-        //                 UPDATE(Capex.drafts)
-        //                     .set({ totalCost: total })
-        //                     .where({ ID: ID }))  // Using the current ID}
-        //         }
-        //     }
-
-        //     console.log("new total", total)
-        //     req.data.totalCost = total;
-        //     console.log(req.data)
-
-        // });
 
         this.before('UPDATE', Capex.drafts, async (req) => {
             console.log("UPDATE Capex.drafts:");
@@ -204,28 +157,7 @@ class CapexCatalogService extends cds.ApplicationService {
         }
 
 
-        // this.after('UPDATE', CashFlowYear.drafts, async (_, req) => {
-        //     console.log("UPDATE CashFlowYear.drafts:");
-        //     const { ID } = req.data;
 
-        //     const record = await db.run(SELECT.one.from(CashFlowYear.drafts).where({ ID: ID }));
-
-        //     if (record) {
-        //         let total = 0;
-        //         total = record.cashFlowQOne + record.cashFlowQTwo + record.cashFlowQThree + record.cashFlowQFour;
-        //         console.log("Total calculated:", total);
-        //         if (total) {
-        //             await db.run(
-        //                 UPDATE(CashFlowYear.drafts)
-        //                     .set({ total: total })
-        //                     .where({ ID: ID }))  // Using the current ID}
-        //         }
-        //     }
-        // });
-        // this.after(UPDATE, CashFlowYear, async (data) => {
-        //     console.log("ptach CashFlowYear.drafts:");
-        //     await UPDATE(CashFlowYear.drafts, data.ID).set`total = cashFlowQOne + cashFlowQTwo + cashFlowQThree + cashFlowQFour`
-        // });
         this.before('UPDATE', CashFlowYear.drafts, async (req) => {
             console.log("UPDATE before CashFlowYear.drafts:");
 
@@ -323,7 +255,71 @@ class CapexCatalogService extends cds.ApplicationService {
             }
         });
 
+        this.on('copyCapex', async (req) => {
+            const { ID } = req.params[0];
+            // console.log(req)
+            // console.log(req.params)
+            const originalCapex = await db.run(
+                SELECT.one.from(Capex)
+                    .columns(cpx => {
+                        cpx`*`,                   // Select all columns from Capex
+                            cpx.to_CashFlowYear(cfy => { cfy`*` }) // Select all columns from the composition entity CashFlowYear
+                    })
+                    .where({ ID: ID })
+            );
 
+            if (!originalCapex) {
+                req.error(404, 'Original Capex entity not found');
+                return;
+            }
+
+            // Create a deep copy of the entity
+            const copiedCapex = Object.assign({}, originalCapex);
+            delete copiedCapex.ID;  // Remove the ID to ensure a new entity is created
+            delete copiedCapex.createdAt;
+            delete copiedCapex.createdBy;
+            delete copiedCapex.modifiedAt;
+            delete copiedCapex.modifiedBy;
+            // copiedCapex.HasActiveEntity = false;
+            copiedCapex.DraftAdministrativeData_DraftUUID = cds.utils.uuid();
+            // Ensure all related entities are copied
+            if (originalCapex.to_CashFlowYear) {
+                copiedCapex.to_CashFlowYear = originalCapex.to_CashFlowYear.map(cashFlow => {
+                    const copiedCashFlow = Object.assign({}, cashFlow);
+                    delete copiedCashFlow.ID; // Remove the ID to create a new related entity
+                    delete copiedCashFlow.up__ID;
+                    delete copiedCashFlow.createdAt;
+                    delete copiedCashFlow.createdBy;
+                    delete copiedCashFlow.modifiedAt;
+                    delete copiedCashFlow.modifiedBy;
+                    // copiedCashFlow.HasActiveEntity = false;
+                    copiedCashFlow.DraftAdministrativeData_DraftUUID = cds.utils.uuid();
+                    return copiedCashFlow;
+                });
+            }
+            //create a draft
+            const oCapex = await this.send({
+                query: INSERT.into(Capex).entries(copiedCapex),
+                event: "NEW",
+            });
+            req.notify("Order has been successfully copied and saved as a new draft.");
+            //return the draft
+            return oCapex;
+
+        });
+
+        this.on("validate", async req => {
+            return req.notify(`Validate action pressed`); //Search-Term: #MessageToast
+        });
+        this.on("approve", async req => {
+            return req.notify(`Approve action pressed`); //Search-Term: #MessageToast
+        });
+        this.on("rejectFinal", async req => {
+            return req.notify(`Final Reject action pressed`); //Search-Term: #MessageToast
+        });
+        this.on("rejectIncomplete", async req => {
+            return req.notify(`Incomplete Reject action pressed`); //Search-Term: #MessageToast
+        });
         return super.init();
     }
 }
