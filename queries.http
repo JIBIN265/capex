@@ -1,9 +1,9 @@
 ###
-GET  http://localhost:4004/odata/v4/inv-catalog
+GET  http://localhost:4004/odata/v4/capex-catalog
 
-GET  http://localhost:45451/odata/v4/inv-catalog/PurchaseOrder
+GET  http://localhost:45451/odata/v4/capex-catalog/$metadata
 
-GET http://localhost:4004/odata/v4/inv-catalog/PurchaseOrder?$expand=_PurchaseOrderItem
+GET http://localhost:4004/odata/v4/capex-catalog/PurchaseOrder?$expand=_PurchaseOrderItem
 
 GET  http://localhost:4004/odata/v4/capex-catalog/getStatusCount
 

@@ -29,7 +29,7 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension'], function (ControllerExten
 							oFunction = oModel.bindContext(`/${sFunctionName}(...)`),
 
 							statusMappings = {
-								'N': { type: sap.ui.core.MessageType.Information, key: 'inProgress' },
+								'N': { type: sap.ui.core.MessageType.Information, key: 'isInProgress' },
 								'X': { type: sap.ui.core.MessageType.Error, key: 'notes' },
 								'I': { type: sap.ui.core.MessageType.Warning, key: 'isRejectionIncomplete' },
 								'D': { type: sap.ui.core.MessageType.None, key: 'isDraft' },
