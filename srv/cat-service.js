@@ -264,6 +264,7 @@ class CapexCatalogService extends cds.ApplicationService {
             delete data.status;
             delete data.documentID;
             delete data.notes;
+            console.log("SAP", data);
             delete data.numericSeverity;
             delete data.downtime;
             delete data.appropriationLife;
