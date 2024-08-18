@@ -45,6 +45,7 @@ annotate service.Capex with {
     creditPotential       @title: '{i18n>creditPotential}'       @UI.Placeholder: '{i18n>placeHolderCreditPotential}';
     insuranceApproval     @title: '{i18n>insuranceApproval}'     @UI.Placeholder: '{i18n>placeHolderInsuranceApproval}';
     status                @title: '{i18n>status}'                @Common.Text   : to_Status.value  @Common.TextArrangement: #TextOnly;
+    notes                 @title: '{i18n>notes}'                 @UI.Placeholder: '{i18n>placeHolderNotes}';
 };
 
 annotate service.UnitOfMeasureCodeList with {

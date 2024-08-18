@@ -1,6 +1,6 @@
 using CapexCatalogService as service from '../../srv/cat-service';
 
-
+// annotate service.Capex.approve with @(Common.IsActionCritical: true);
 //
 // annotations that control the behavior of fields and actions
 // Bold Keys and for navigation
@@ -15,6 +15,7 @@ annotate service.Capex {
     totalCost   @Core.Computed           @Measures.ISOCurrency: currency_code;
     // description_custom     @Core.Computed           @UI.HiddenFilter: true  @UI.ExcludeFromNavigationContext;
     description @UI.MultiLineText;
+    notes       @UI.MultiLineText;
     createdAt   @UI.HiddenFilter: false  @UI.ExcludeFromNavigationContext;
     createdBy   @UI.HiddenFilter: false  @UI.ExcludeFromNavigationContext;
     modifiedAt  @UI.HiddenFilter: false  @UI.ExcludeFromNavigationContext;

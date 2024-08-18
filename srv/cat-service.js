@@ -252,32 +252,26 @@ class CapexCatalogService extends cds.ApplicationService {
 
             if (req.errors) { req.reject(); }
 
-            let data = req.data;
-            data.currency = req.data.currency_code;
-            data.orderNumber = req.data.documentID.toString();
-            delete data.currency_code;
-            delete data.to_CashFlowYear;
-            delete data.to_Objectives;
-            delete data.to_Attachments;
-            delete data.to_RejectionReasons;
-            delete data.ID;
-            delete data.status;
-            delete data.documentID;
-            delete data.notes;
-            console.log("SAP", data);
-            delete data.numericSeverity;
-            delete data.downtime;
-            delete data.appropriationLife;
+            // let data = req.data;
+            let data = JSON.parse(JSON.stringify(req.data));
+            // Delete unnecessary fields
+            const fieldsToDelete = [
+                'currency_code', 'to_CashFlowYear', 'to_Objectives', 'to_Attachments', 'to_RejectionReasons',
+                'ID', 'status', 'documentID', 'notes', 'numericSeverity', 'downtime', 'appropriationLife'
+            ];
+            fieldsToDelete.forEach(field => delete data[field]);
 
+            // Convert specific fields
             data.downtime = req.data.downtime !== undefined ? req.data.downtime.toString() : "0";
             data.appropriationLife = req.data.appropriationLife !== undefined ? req.data.appropriationLife.toString() : "0";
+            data.currency = req.data.currency_code;
+            data.orderNumber = req.data.documentID.toString();
 
             console.log("SAP", data);
-            req.notify(data);
+
 
             // let result = await ecc.run(INSERT.into(MasterDataSet).entries(data));
 
-            // let result;
             let errorMessage = '';
             let successData = null;
 
@@ -311,8 +305,9 @@ class CapexCatalogService extends cds.ApplicationService {
 
             // Now you can use errorMessage and successData as needed
             if (errorMessage) {
+                req.data.notes = errorMessage;
                 console.error("Error:", errorMessage);
-            //    req.info("Error:" + errorMessage);
+                //    req.info("Error:" + errorMessage);
             } else {
                 console.log("Success:", successData);
                 //req.info("Success:" + successData);

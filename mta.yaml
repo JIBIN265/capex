@@ -1,7 +1,7 @@
 _schema-version: "3.1"
 ID: capex
-description: Supplier Invoice
-version: 1.0.10
+description: Capex
+version: 1.0.12
 modules:
   - name: capex-srv
     type: nodejs

@@ -19,7 +19,8 @@ service CapexCatalogService @(requires: 'authenticated-user') {
             // )
             action copyCapex(in : $self) returns Capex;
             action validate()            returns Capex;
-            action approve()             returns Capex;
+            @(Common.IsActionCritical: true)
+            action approve()             returns Capex ;
             action rejectFinal()         returns Capex;
             action rejectIncomplete()    returns Capex;
         };

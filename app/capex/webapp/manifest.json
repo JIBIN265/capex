@@ -388,6 +388,20 @@
                     }
                   }
                 },
+                "@com.sap.vocabularies.UI.v1.FieldGroup#Notes": {
+                  "fields": {
+                    "DataField::notes": {
+                      "formatOptions": {
+                        "textLinesDisplay": 2,
+                        "textMaxLines": "5",
+                        "textLinesEdit": 4,
+                        "textMaxLength": 1000,
+                        "textMaxCharactersDisplay": 300,
+                        "textExpandBehaviorDisplay": "Popover"
+                      }
+                    }
+                  }
+                },
                 "to_CashFlowYear/@com.sap.vocabularies.UI.v1.LineItem#AnnualCashFlow": {
                   "tableSettings": {
                     "creationMode": {

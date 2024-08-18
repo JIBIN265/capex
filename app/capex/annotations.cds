@@ -173,6 +173,26 @@ annotate service.Capex with @(
         {Value: modifiedAt},
         {Value: modifiedBy}
     ]},
+    UI.FieldGroup #Notes                  : {Data: [{Value: notes}]},
+    UI.DataPoint #Status                  : {
+        Value               : status,
+        Title               : '{i18n>status}',
+        Criticality         : to_Status.criticality,
+        ![@Common.QuickInfo]: '{i18n>status}',
+    },
+    UI.DataPoint #orderNumber             : {
+        Value               : orderNumber,
+        Title               : '{i18n>orderNumber}',
+        Visualization       : #Number,
+        // Criticality         : to_Status.criticality,
+        ![@Common.QuickInfo]: '{i18n>orderNumber}',
+    },
+    UI.DataPoint #documentID              : {
+        Value               : documentID,
+        Title               : '{i18n>documentID}',
+        Criticality         : to_Status.criticality,
+        ![@Common.QuickInfo]: '{i18n>documentID}',
+    },
     UI.Facets                             : [
         {
             $Type : 'UI.CollectionFacet',
@@ -270,6 +290,18 @@ annotate service.Capex with @(
             ID    : 'Objectives',
             Target: 'to_Objectives/@UI.LineItem#Objectives',
         },
+        {
+            $Type : 'UI.CollectionFacet',
+            ID    : 'CapexNotesId',
+            Label : '{i18n>notes}',
+            Facets: [{
+                $Type : 'UI.ReferenceFacet',
+                Target: '@UI.FieldGroup#Notes',
+                ID    : 'CapexpReferenceNotesId',
+                Label : ''
+            }, ],
+        }
+
     ],
     UI.Identification                     : [
         {
@@ -283,13 +315,13 @@ annotate service.Capex with @(
             $Type              : 'UI.DataFieldForAction',
             Action             : 'CapexCatalogService.copyCapex',
             Label              : '{i18n>Copy}',
-            ![@UI.IsCopyAction]: true, 
+            ![@UI.IsCopyAction]: true,
         },
         {
-            $Type      : 'UI.DataFieldForAction',
-            Action     : 'CapexCatalogService.approve',
-            Label      : '{i18n>Approve}', 
-            // Criticality: 3
+            $Type : 'UI.DataFieldForAction',
+            Action: 'CapexCatalogService.approve',
+            Label : '{i18n>Approve}',
+        // Criticality: 3
         },
         {
             $Type : 'UI.DataFieldForAction',
@@ -319,7 +351,7 @@ annotate service.Capex with @(
             Visualizations: ['@UI.LineItem', ],
             SortOrder     : [{
                 $Type     : 'Common.SortOrderType',
-                Property  : orderNumber,
+                Property  : documentID,
                 Descending: false,
             }, ],
         },
@@ -417,6 +449,7 @@ annotate service.Capex with @(UI.HeaderInfo: {
     Title         : {
         $Type: 'UI.DataField',
         Value: documentID,
+    // Criticality: #VeryPositive,
     },
     Description   : {
         $Type: 'UI.DataField',
@@ -432,18 +465,56 @@ annotate service.Capex with @(UI.HeaderInfo: {
 //     UI.HeaderFacets
 //     Search-Term: #GeneralFacets
 //  */
-annotate service.Capex with @(UI.HeaderFacets: [{
-    $Type : 'UI.CollectionFacet',
-    ID    : 'HeaderCollectionFacetId',
-    Label : '{i18n>adminData}',
-    Facets: [{
-        $Type : 'UI.ReferenceFacet',
-        Target: '@UI.FieldGroup#AdminData',
-        ID    : 'AdminDataID',
+annotate service.Capex with @(UI.HeaderFacets: [
+    {
+        $Type : 'UI.CollectionFacet',
+        ID    : 'HeaderCollectionFacetId',
         Label : '{i18n>adminData}',
-    }]
-},
+        Facets: [{
+            $Type : 'UI.ReferenceFacet',
+            Target: '@UI.FieldGroup#AdminData',
+            ID    : 'AdminDataID',
+            Label : '{i18n>adminData}',
+        }]
+    },
 
+    {
+
+        $Type : 'UI.ReferenceFacet',
+        Target: '@UI.DataPoint#Status',
+        ID    : 'statusDataPointID',
+        Label : '{i18n>status}',
+
+    },
+    {
+        $Type : 'UI.ReferenceFacet',
+        Target: '@UI.DataPoint#orderNumber',
+        ID    : 'OrderNumberDataPointID',
+        Label : '{i18n>orderNumber}',
+
+    },
+//   {
+//         $Type : 'UI.CollectionFacet',
+//         ID    : 'HeaderCollection3FacetId',
+//         Label : '{i18n>status}',
+//         Facets: [{
+//             $Type : 'UI.ReferenceFacet',
+//             Target: '@UI.DataPoint#Status',
+//             ID    : 'statusDataPointID',
+//             Label : '{i18n>status}',
+//         }]
+//     },
+//     {
+//         $Type : 'UI.CollectionFacet',
+//         ID    : 'HeaderCollection2FacetId',
+//         Label : '{i18n>adminData}',
+//         Facets: [{
+//             $Type : 'UI.ReferenceFacet',
+//             Target: '@UI.DataPoint#orderNumber',
+//             ID    : 'OrderNumberDataPointID',
+//             Label : '{i18n>orderNumber}',
+//         }]
+//     },
 ]);
 
 annotate service.Objectives with @(
@@ -484,8 +555,16 @@ annotate service.Capex with @(UI.LineItem: {
     ![@UI.Criticality]: to_Status.criticality, // Annotation, so that the row has a criticality
     $value            : [
         {
-            $Type: 'UI.DataField',
-            Value: documentID,
+            $Type                : 'UI.DataField',
+            Value                : documentID,
+            ![@UI.Importance]    : #High,
+            ![@HTML5.CssDefaults]: {width: '25%'}
+        },
+        {
+            $Type                : 'UI.DataField',
+            Value                : orderNumber,
+            ![@UI.Importance]    : #High,
+            ![@HTML5.CssDefaults]: {width: '25%'}
         },
         {
             $Type: 'UI.DataField',
@@ -544,14 +623,18 @@ annotate service.Capex with @(UI.LineItem: {
             CriticalityRepresentation: #WithIcon,
         },
         {
-            $Type: 'UI.DataField',
-            Value: createdBy,
+            $Type                : 'UI.DataField',
+            Value                : createdBy,
+            ![@HTML5.CssDefaults]: {width: '20%'}
         },
         {
-            $Type: 'UI.DataField',
-            Value: createdAt,
+            $Type                : 'UI.DataField',
+            Value                : createdAt,
+            ![@HTML5.CssDefaults]: {width: '20%'}
         },
     ]
 },
 
 );
+
+
