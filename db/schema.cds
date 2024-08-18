@@ -22,18 +22,18 @@ type messageImport {
 }
 
 type statusCount {
-  inProgressCount       : Integer;
-  Count                 : Integer;
-  rejectIncompleteCount : Integer;
-  draftCount            : Integer;
-  rejectFinalCount      : Integer;
-  approvedCount         : Integer;
+  inProgressCount       : Integer default 0;
+  Count                 : Integer default 0;
+  rejectIncompleteCount : Integer default 0;
+  draftCount            : Integer default 0;
+  rejectFinalCount      : Integer default 0;
+  approvedCount         : Integer default 0;
 }
 
 
 aspect DocumentId {
   @description: 'Unique Document ID'
-  documentID : Integer;
+  documentID : Integer default 0;
 }
 
 entity Division : CodeList {
@@ -92,88 +92,88 @@ aspect CapexMain {
                            on to_BusinessReason.code = businessReason;
 
   @description: 'Amount'
-  amount               : Decimal(11, 2); // ZZPROFIMPR
+  amount               : Decimal(11, 2) default 0; // ZZPROFIMPR
 
   @description: 'Currency'
   currency             : Currency;
 
   @description: 'Strategic'
-  strategic            : Boolean; // ZZSTRATEGI
+  strategic            : Boolean default false; // ZZSTRATEGI
 
   @description: 'Business Sustaining'
-  businessSustaining   : Boolean; // ZZBSUSTAIN
+  businessSustaining   : Boolean default false; // ZZBSUSTAIN
 
   @description: 'Mandatory'
-  mandatory            : Boolean; // ZZMANDATOR
+  mandatory            : Boolean default false; // ZZMANDATOR
 
   @description: 'Profit Improvement'
-  profitImprovement    : Boolean; // ZZPROFIMPR
+  profitImprovement    : Boolean default false; // ZZPROFIMPR
 
   @description: 'Mill Labor'
-  millLabor            : Decimal(11, 2); // ZZMILLABOR
+  millLabor            : Decimal(11, 2) default 0; // ZZMILLABOR
 
   @description: 'Maintenance Labor'
-  maintenanceLabor     : Decimal(11, 2); // ZZMNTLABOR
+  maintenanceLabor     : Decimal(11, 2) default 0; // ZZMNTLABOR
 
   @description: 'Operations Labor'
-  operationsLabor      : Decimal(11, 2); // ZZOPSLABOR
+  operationsLabor      : Decimal(11, 2) default 0; // ZZOPSLABOR
 
   @description: 'Outside Contract'
-  outsideContract      : Decimal(11, 2); // ZZOUTCONTR
+  outsideContract      : Decimal(11, 2) default 0; // ZZOUTCONTR
 
   @description: 'Material Cost'
-  materialCost         : Decimal(11, 2); // ZZMATERIAL
+  materialCost         : Decimal(11, 2) default 0; // ZZMATERIAL
 
   @description: 'Hardware Cost'
-  hardwareCost         : Decimal(11, 2); // ZZ-HARDWARE
+  hardwareCost         : Decimal(11, 2) default 0; // ZZ-HARDWARE
 
   @description: 'Software Cost'
-  softwareCost         : Decimal(11, 2); // ZZSOFTWARE
+  softwareCost         : Decimal(11, 2) default 0; // ZZSOFTWARE
 
   @description: 'Contingency Cost'
-  contingencyCost      : Decimal(11, 2); // ZZCONTINGE
+  contingencyCost      : Decimal(11, 2) default 0; // ZZCONTINGE
 
   @description: 'Total Cost'
-  totalCost            : Decimal(11, 2); // Total
+  totalCost            : Decimal(11, 2) default 0; // Total
 
   @description: 'Appropriation Life'
-  appropriationLife    : Integer; // ZZLIFE
+  appropriationLife    : Integer default 0 @odata.Type : 'Edm.String'; // ZZLIFE
 
   @description: 'Profit Improvement Percentage Cost'
-  profitImprovementPct : Decimal(5, 2); // ZZPROFIMPP
+  profitImprovementPct : Decimal(5, 2) default 0; // ZZPROFIMPP
 
   @description: 'Profit Improvement N.P.V. ($)'
-  profitImprovementNPV : Decimal(11, 2); // ZZPROFIMPV
+  profitImprovementNPV : Decimal(11, 2) default 0; // ZZPROFIMPV
 
   @description: 'Payback Period with taxes'
-  paybackWithTaxes     : Decimal(3, 1); // ZZPAYBCKWT
+  paybackWithTaxes     : Decimal(3, 1) default 0; // ZZPAYBCKWT
 
   @description: 'Payback Period no taxes'
-  paybackWithoutTaxes  : Decimal(3, 1); // ZZPAYBCKNT
+  paybackWithoutTaxes  : Decimal(3, 1) default 0; // ZZPAYBCKNT
 
   @description: 'Expenses One Time'
-  oneTimeExpenses      : Decimal(11, 2); // ZZEXPENSES
+  oneTimeExpenses      : Decimal(11, 2) default 0; // ZZEXPENSES
 
   @description: 'Expenses Recurring per Year'
-  recurringExpenses    : Decimal(11, 2); // ZZEXPENSE2
+  recurringExpenses    : Decimal(11, 2) default 0; // ZZEXPENSE2
 
   @description: 'Start up date from appropriation'
   startupDate          : Date; // ZZSTARTDAT
 
   @description: 'Down Time in days'
-  downtime             : Integer; // ZZDOWNTIME
+  downtime             : Integer default 0 @odata.Type : 'Edm.String'; // ZZDOWNTIME
 
   @description: 'Environmental implications'
-  environmentalImpacts : Boolean; // ZZENVIMPLI
+  environmentalImpacts : Boolean default false; // ZZENVIMPLI
 
   @description: 'Safety Implications'
-  safetyImplications   : Boolean; // ZZSAFIMPLI
+  safetyImplications   : Boolean default false; // ZZSAFIMPLI
 
   @description: 'SR & ED Credit Potential'
-  creditPotential      : Boolean; // ZZCRDPOTEN
+  creditPotential      : Boolean default false; // ZZCRDPOTEN
 
   @description: 'Insurance Approval Required'
-  insuranceApproval    : Boolean; // ZZINSAPPRV
+  insuranceApproval    : Boolean default false; // ZZINSAPPRV
 
   @description: 'Status'
   status               : String(1);
@@ -186,10 +186,10 @@ aspect CapexMain {
 entity StatusValues {
   key code           : String(1);
       value          : String(20);
-      criticality    : Integer;
-      deletePossible : Boolean;
-      insertPossible : Boolean;
-      updatePossible : Boolean;
+      criticality    : Integer default 0;
+      deletePossible : Boolean default false;
+      insertPossible : Boolean default false;
+      updatePossible : Boolean default false;
 }
 
 entity CapexEntity : cuid, managed, CapexMain, DocumentId, messageImport {
@@ -214,13 +214,13 @@ aspect Objectives : cuid, managed {
 
   @description: 'Target'
   // @UoM.Unit   : '%'
-  objectiveTarget : Decimal(5, 2); // ZZOTTARGE3
+  objectiveTarget : Decimal(5, 2) default 0; // ZZOTTARGE3
 
   @description: 'Filled'
-  filled          : Boolean;
+  filled          : Boolean default false;
 
   @description: 'Impact'
-  impact          : Boolean; // ZZOTIMPAC3
+  impact          : Boolean default false; // ZZOTIMPAC3
 
   @description: 'Amount'
   amount          : String(50); // ZZOTAMOUN3
@@ -229,22 +229,22 @@ aspect Objectives : cuid, managed {
 aspect CashFlowYear : cuid, managed {
 
   @description: 'Year'
-  year           : Integer; // ZZYEAR4
+  year           : Integer default 0; // ZZYEAR4
 
   @description: 'Quarter One'
-  cashFlowQOne   : Decimal(11, 2); // ZZ4CASHFLQ1
+  cashFlowQOne   : Decimal(11, 2) default 0; // ZZ4CASHFLQ1
 
   @description: 'Cash Flow Quarter Two'
-  cashFlowQTwo   : Decimal(11, 2); // ZZ4CASHFLQ2
+  cashFlowQTwo   : Decimal(11, 2) default 0; // ZZ4CASHFLQ2
 
   @description: 'Cash Flow Quarter Three'
-  cashFlowQThree : Decimal(11, 2); // ZZ4CASHFLQ3
+  cashFlowQThree : Decimal(11, 2) default 0; // ZZ4CASHFLQ3
 
   @description: 'Cash Flow Quarter Four'
-  cashFlowQFour  : Decimal(11, 2); // ZZ4CASHFLQ4
+  cashFlowQFour  : Decimal(11, 2) default 0; // ZZ4CASHFLQ4
 
   @description: 'Total'
-  total          : Decimal(11, 2); // ZZ4CASHFLQ1
+  total          : Decimal(11, 2) default 0; // ZZ4CASHFLQ1
 
 }
 
@@ -263,13 +263,13 @@ entity Sustainability2030 : cuid, managed {
 
   @description: 'Target'
   // @UoM.Unit   : '%'
-  objectiveTarget : Decimal(5, 2); // ZZOTTARGE3
+  objectiveTarget : Decimal(5, 2) default 0; // ZZOTTARGE3
 
   @description: 'Filled'
-  filled          : Boolean;
+  filled          : Boolean default false;
 
   @description: 'Impact'
-  impact          : Boolean; // ZZOTIMPAC3
+  impact          : Boolean default false; // ZZOTIMPAC3
 
   @description: 'Amount'
   amount          : String(50); // ZZOTAMOUN3

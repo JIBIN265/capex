@@ -1,6 +1,7 @@
 const cds = require("@sap/cds");
 const { SELECT, INSERT, UPDATE } = cds.ql;
 const SequenceHelper = require("./lib/SequenceHelper");
+const { data } = require("@sap/cds/lib/dbs/cds-deploy");
 const defaults = require("dotenv").config({
     path: "./srv/defaults/sap-defaults.env",
 });
@@ -20,7 +21,8 @@ class CapexCatalogService extends cds.ApplicationService {
             OrderTypeF4Set,
             BusinessReasonF4Set,
             DivisionF4Set,
-            SiteF4Set
+            SiteF4Set,
+            MasterDataSet
         } = this.entities;
 
         const db = await cds.connect.to("db");
@@ -233,8 +235,93 @@ class CapexCatalogService extends cds.ApplicationService {
             console.log("Calculated total:", req.data.total);
         });
 
+        this.before('SAVE', Capex, async req => {
+            // console.log(req.event)
+            if (!req.event === 'CREATE' && !req.event === 'UPDATE') { return; }  //only calculate if create or update
+            const {
+                ID,
+                totalCost,
+                amount
+            } = req.data;
+
+            if (totalCost > amount) {
+                req.error(400, `TOTALCOST`, `in/amount`, [totalCost, amount]);
+            }
+
+            const record = await db.run(SELECT.one.from(Capex).where({ ID: ID }));
+
+            if (req.errors) { req.reject(); }
+
+            let data = req.data;
+            data.currency = req.data.currency_code;
+            data.orderNumber = req.data.documentID.toString();
+            delete data.currency_code;
+            delete data.to_CashFlowYear;
+            delete data.to_Objectives;
+            delete data.to_Attachments;
+            delete data.to_RejectionReasons;
+            delete data.ID;
+            delete data.status;
+            delete data.documentID;
+            delete data.notes;
+            delete data.numericSeverity;
+            delete data.downtime;
+            delete data.appropriationLife;
+
+            data.downtime = req.data.downtime !== undefined ? req.data.downtime.toString() : "0";
+            data.appropriationLife = req.data.appropriationLife !== undefined ? req.data.appropriationLife.toString() : "0";
+
+            console.log("SAP", data);
+            req.notify(data);
+
+            // let result = await ecc.run(INSERT.into(MasterDataSet).entries(data));
+
+            // let result;
+            let errorMessage = '';
+            let successData = null;
+
+            try {
+                // result = await ecc.run(INSERT.into(MasterDataSet).entries(data));
+                let insertQuery = INSERT.into('MasterDataSet', [data])
+
+                // Execute query against backend system
+                let result = await ecc.tx(req).run(insertQuery)
+
+                // If we reach here, it means the operation was successful
+                successData = result;
+                req.data.orderNumber = successData.orderNumber;
+                //req.info(`Order ${successData.orderNumber} created successfully`);
+                console.log(`Order ${successData.orderNumber} created successfully`);
+            } catch (error) {
+                // Handle the error case
+                if (error.code) {
+                    errorMessage = error.message || "An exception was raised.";
+
+                    // Extract more detailed error information if available
+                    if (error.innerError && error.innerError.errordetails) {
+                        error.innerError.errordetails.forEach(detail => {
+                            errorMessage += `\n${detail.code}: ${detail.message}`;
+                        });
+                    }
+                } else {
+                    errorMessage = "An unexpected error occurred";
+                }
+            }
+
+            // Now you can use errorMessage and successData as needed
+            if (errorMessage) {
+                console.error("Error:", errorMessage);
+            //    req.info("Error:" + errorMessage);
+            } else {
+                console.log("Success:", successData);
+                //req.info("Success:" + successData);
+            }
+
+        });
+
         this.after('SAVE', Capex, async (_, req) => {
             console.log(req.data);
+            if (!req.data.documentID) { return };
             let testData = {
                 "definitionId": "us10.yk2lt6xsylvfx4dz.zcapexworkflow.triggerWorkflow",
                 "context": {
@@ -280,6 +367,8 @@ class CapexCatalogService extends cds.ApplicationService {
             delete copiedCapex.createdBy;
             delete copiedCapex.modifiedAt;
             delete copiedCapex.modifiedBy;
+
+
             // copiedCapex.HasActiveEntity = false;
             copiedCapex.DraftAdministrativeData_DraftUUID = cds.utils.uuid();
             // Ensure all related entities are copied
