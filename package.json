@@ -32,7 +32,7 @@
     "@cap-js/sqlite": "^1",
     "@sap/cds-dk": "^7",
     "@sap/eslint-plugin-cds": "^3",
-    "@sap/ux-specification": "^1.120.16",
+    "@sap/ux-specification": "^1.120.17",
     "cds-plugin-ui5": "^0.6.13",
     "rimraf": "^3.0.2"
   },
@@ -99,6 +99,7 @@
   ],
   "sapux": [
     "app/capex",
-    "app/capex"
+    "app/capex",
+    "app/status"
   ]
 }

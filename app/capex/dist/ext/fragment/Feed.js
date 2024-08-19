@@ -1,0 +1,2 @@
+sap.ui.define(["sap/m/MessageToast","sap/m/MessageBox","sap/ui/core/Fragment"],function(e,t,n){"use strict";return{onPost:async function(t){debugger;var n=t.getSource();var o=n.getValue();var s=t.getParameter("value");var r=n.getBindingContext();if(!r){e.show("No context found.");return}var a={text:o};var u=r.getModel();u.create("/to_Comments",a,{context:r,success:function(){e.show("Comment added successfully!");n.setValue("")},error:function(){e.show("Error adding comment.")}})},onSenderPress:function(e){},onIconPress:function(e){}}});
+//# sourceMappingURL=Feed.js.map

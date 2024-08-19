@@ -175,16 +175,25 @@ aspect CapexMain {
   @description: 'Insurance Approval Required'
   insuranceApproval    : Boolean default false; // ZZINSAPPRV
 
+  @description: 'Business Area'
+  businessArea         : String(4);
+
+  @description: 'Controlling Area'
+  controllingArea      : String(4);
+
   @description: 'Status'
-  status               : String(1);
+  status               : String(5);
+
+  @description: 'Stonr'
+  stonr               : String(3);
 
   @description: 'Status Value Association'
   to_Status            : Association to one StatusValues
                            on to_Status.code = status;
 }
 
-entity StatusValues {
-  key code           : String(1);
+entity StatusValues: cuid, managed, {
+  key code           : String(5);
       value          : String(20);
       criticality    : Integer default 0;
       deletePossible : Boolean default false;

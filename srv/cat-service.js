@@ -31,9 +31,95 @@ class CapexCatalogService extends cds.ApplicationService {
         const ecc = await cds.connect.to('ZODATA_INTERNAL_ORDER_SRV');
 
         this.on('READ', [Cot001Set, OrderTypeF4Set, BusinessReasonF4Set,
-            DivisionF4Set, SiteF4Set, CurrencyF4Set], async req => {
+            DivisionF4Set, SiteF4Set, CurrencyF4Set, MasterDataSet], async req => {
                 return ecc.run(req.query);
+
             });
+
+        this.before('READ', Capex, async (req) => {
+            try {
+                const masterData = await ecc.tx(req).run(SELECT.from('MasterDataSet'));
+
+                if (!masterData) {
+                    return req.error(500, 'ECC Server could not be reached');
+                }
+
+                if (Array.isArray(masterData)) {
+                    // Insert new records from MasterDataSet to local DB
+                    await Promise.all(masterData.map(async (item) => {
+                        // Check if the record already exists in the local DB
+                        const bpID = item.orderNumber
+                        const existingRecord = await db.run(
+                            SELECT.from(Capex).where({ orderNumber: bpID })
+                        );
+
+                        if (existingRecord.length === 0) {
+                            // If the record doesn't exist, insert it
+                            console.log(`Inserting new record with orderNumber: ${item.orderNumber}`);
+                            const documentID = new SequenceHelper({
+                                db: db,
+                                sequence: "ZCAPEX_DOCUMENT_ID",
+                                table: "zcapex_CapexEntity",
+                                field: "documentID",
+                            });
+
+                            let number = await documentID.getNextNumber();
+                            const insertStmt = INSERT.into(Capex).entries({
+                                documentID: number.toString(),
+                                orderNumber: item.orderNumber,
+                                orderType: item.orderType,
+                                companyCode: item.companyCode,
+                                site: item.site,
+                                division: item.division,
+                                description: item.description,
+                                businessReason: item.businessReason,
+                                currency_code: item.currency,
+                                appropriationLife: item.appropriationLife,
+                                downtime: item.downtime,
+                                amount: item.amount,
+                                millLabor: item.millLabor,
+                                maintenanceLabor: item.maintenanceLabor,
+                                operationsLabor: item.operationsLabor,
+                                outsideContract: item.outsideContract,
+                                materialCost: item.materialCost,
+                                hardwareCost: item.hardwareCost,
+                                softwareCost: item.softwareCost,
+                                contingencyCost: item.contingencyCost,
+                                totalCost: item.totalCost,
+                                profitImprovementPct: item.profitImprovementPct,
+                                profitImprovementNPV: item.profitImprovementNPV,
+                                paybackWithTaxes: item.paybackWithTaxes,
+                                paybackWithoutTaxes: item.paybackWithoutTaxes,
+                                oneTimeExpenses: item.oneTimeExpenses,
+                                recurringExpenses: item.recurringExpenses,
+                                startupDate: item.startupDate,
+                                strategic: item.strategic,
+                                businessSustaining: item.businessSustaining,
+                                mandatory: item.mandatory,
+                                profitImprovement: item.profitImprovement,
+                                environmentalImpacts: item.environmentalImpacts,
+                                safetyImplications: item.safetyImplications,
+                                creditPotential: item.creditPotential,
+                                insuranceApproval: item.insuranceApproval,
+                                businessArea: item.businessArea,
+                                controllingArea: item.controllingArea,
+                                stonr: item.stonr
+                            });
+                            await db.run(insertStmt);
+                        } else {
+                            // If the record exists, we do nothing
+                            console.log(`Record with orderNumber: ${item.orderNumber} already exists. Skipping.`);
+                        }
+                    }));
+                    console.log('Synchronization with ECC completed successfully');
+                }
+
+            } catch (error) {
+                console.error('Error during synchronization:', error);
+                return req.error(500, error.message);
+            }
+
+        });
 
         this.before("NEW", Capex.drafts, async (req) => {
 
@@ -116,8 +202,6 @@ class CapexCatalogService extends cds.ApplicationService {
 
         this.on('getStatusCount', async (req) => {
             try {
-                debugger;
-
                 const statusKeys = ['N', 'X', 'I', 'D', 'R', 'A']; // Example status keys
                 const statusCount = await getStatusCounts(statusKeys);
 
@@ -258,7 +342,7 @@ class CapexCatalogService extends cds.ApplicationService {
             // Delete unnecessary fields
             const fieldsToDelete = [
                 'currency_code', 'to_CashFlowYear', 'to_Objectives', 'to_Attachments', 'to_RejectionReasons',
-                'ID', 'status', 'documentID', 'notes', 'numericSeverity', 'downtime', 'appropriationLife'
+                'ID', 'status', 'documentID', 'notes', 'numericSeverity', 'to_Comments', 'downtime', 'appropriationLife'
             ];
             fieldsToDelete.forEach(field => delete data[field]);
 

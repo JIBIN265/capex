@@ -22,5 +22,6 @@
       "destination": "srv-api",
       "csrfProtection": true
     }
-  ]
+  ],
+  "welcomeFile": "/status"
 }
