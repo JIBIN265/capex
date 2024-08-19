@@ -453,6 +453,18 @@
                       }
                     }
                   }
+                },
+                "body": {
+                  "sections": {
+                    "Feed": {
+                      "template": "capex.ext.fragment.Feed",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "Attachments"
+                      },
+                      "title": "Feed"
+                    }
+                  }
                 }
               }
             }

@@ -20,12 +20,12 @@ service CapexCatalogService @(requires: 'authenticated-user') {
             action copyCapex(in : $self) returns Capex;
             action validate()            returns Capex;
             @(Common.IsActionCritical: true)
-            action approve()             returns Capex ;
+            action approve()             returns Capex;
             action rejectFinal()         returns Capex;
             action rejectIncomplete()    returns Capex;
         };
 
-
+    entity Comments              as projection on persistence.CapexEntity.to_Comments;
     entity CashFlowYear          as projection on persistence.CapexEntity.to_CashFlowYear;
     entity Objectives            as projection on persistence.CapexEntity.to_Objectives;
     entity RejectionReasons      as projection on persistence.CapexEntity.to_RejectionReasons;

@@ -137,7 +137,7 @@ aspect CapexMain {
   totalCost            : Decimal(11, 2) default 0; // Total
 
   @description: 'Appropriation Life'
-  appropriationLife    : Integer default 0 @odata.Type : 'Edm.String'; // ZZLIFE
+  appropriationLife    : Integer default 0 @odata.Type: 'Edm.String'; // ZZLIFE
 
   @description: 'Profit Improvement Percentage Cost'
   profitImprovementPct : Decimal(5, 2) default 0; // ZZPROFIMPP
@@ -161,7 +161,7 @@ aspect CapexMain {
   startupDate          : Date; // ZZSTARTDAT
 
   @description: 'Down Time in days'
-  downtime             : Integer default 0 @odata.Type : 'Edm.String'; // ZZDOWNTIME
+  downtime             : Integer default 0 @odata.Type: 'Edm.String'; // ZZDOWNTIME
 
   @description: 'Environmental implications'
   environmentalImpacts : Boolean default false; // ZZENVIMPLI
@@ -203,9 +203,20 @@ entity CapexEntity : cuid, managed, CapexMain, DocumentId, messageImport {
   @description: 'Rejection Reasons Composition'
   to_RejectionReasons : Composition of many RejectionReasons;
 
+  @description: 'Comments Composition'
+  to_Comments         : Composition of many Comments;
+
   @description: 'Attachments Composition'
   to_Attachments      : Composition of many Attachments;
 };
+
+aspect Comments : cuid, managed {
+
+  icon : String default '![sap-icon://account]';
+  info : String;
+  text : String;
+
+}
 
 aspect Objectives : cuid, managed {
 

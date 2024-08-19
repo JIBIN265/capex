@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/ControllerExtension', 'sap/m/MessageToast'], function (ControllerExtension, MessageToast) {
+sap.ui.define(['sap/ui/core/mvc/ControllerExtension'], function (ControllerExtension) {
 	'use strict';
 
 	return ControllerExtension.extend('capex.ext.controller.CapexObjectPageCustom', {
@@ -28,8 +28,6 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension', 'sap/m/MessageToast'], fun
 							sFunctionName = "getMessages",
 							oFunction = oModel.bindContext(`/${sFunctionName}(...)`),
 
-
-
 							statusMappings = {
 								'N': { type: sap.ui.core.MessageType.Information, key: 'isInProgress' },
 								'X': { type: sap.ui.core.MessageType.Error, key: 'notes' },
@@ -39,43 +37,8 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension', 'sap/m/MessageToast'], fun
 								'A': { type: sap.ui.core.MessageType.Success, key: 'isApproved' }
 							};
 
-						debugger;
 
-						
-							// Access the list from the fragment
-							// const oList = oFragment.getAggregation("content").find(item => item.getId().includes("commentsList"));
-							const oList = oExtensionAPI.byId('capex::CapexObjectPage--fe::CustomSubSection::Feed--commentsList');
-							if (oList) {
-								// Bind the list to /Capex/to_Comments
-								const sPath = `${oBindingContext.getPath()}/to_Comments`;
-								if (oList) {
-									// Define FeedListItem with id
-									const oFeedListItemTemplate = new sap.m.FeedListItem({
-										id: "feedListItemTemplate", 
-										sender: "{createdBy}",
-										icon: "{icon}",
-										info: "{info}",
-										timestamp: "{modifiedAt}",
-										text: "{text}",
-										convertLinksToAnchorTags: "All"
-									});
 
-									// Bind the list to /Capex/to_Comments
-									const sPath = `${oBindingContext.getPath()}/to_Comments`;
-									oList.bindItems({
-										path: sPath,
-										template: oFeedListItemTemplate
-									});
-									debugger
-									// // Manually trigger the binding refresh
-									// const oBinding = oList.getBinding("items");
-									// if (oBinding) {
-									// 	await oBinding.requestRefresh(); // Force refresh
-									// }
-								}
-								debugger;
-							}
-						
 						const aContext = oModel.bindContext(oBindingContext.getPath());
 						// Request the Entity
 						aContext.requestObject().then(data => {
@@ -102,14 +65,6 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension', 'sap/m/MessageToast'], fun
 
 			},
 
-
-
-		},
-		onPost: function () {
-			debugger;
-			MessageToast.show("Pressed on " + oEvent.getSource().getSender());
 		}
-
-
 	});
 });

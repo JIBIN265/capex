@@ -290,17 +290,28 @@ annotate service.Capex with @(
             ID    : 'Objectives',
             Target: 'to_Objectives/@UI.LineItem#Objectives',
         },
-        {
-            $Type : 'UI.CollectionFacet',
-            ID    : 'CapexNotesId',
-            Label : '{i18n>notes}',
-            Facets: [{
-                $Type : 'UI.ReferenceFacet',
-                Target: '@UI.FieldGroup#Notes',
-                ID    : 'CapexpReferenceNotesId',
-                Label : ''
-            }, ],
-        }
+        // {
+        //     $Type : 'UI.CollectionFacet',
+        //     ID    : 'CapexNotesId',
+        //     Label : '{i18n>notes}',
+        //     Facets: [{
+        //         $Type : 'UI.ReferenceFacet',
+        //         Target: '@UI.FieldGroup#Notes',
+        //         ID    : 'CapexpReferenceNotesId',
+        //         Label : ''
+        //     }, ],
+        // },
+        //  {
+        //     $Type : 'UI.CollectionFacet',
+        //     ID    : 'CapexTestId',
+        //     Label : '{i18n>notes2}',
+        //     Facets: [{
+        //         $Type : 'UI.ReferenceFacet',
+        //         Target: 'to_Comments/@UI.LineItem',
+        //         ID    : 'CapexpReferenceTestId',
+        //         Label : ''
+        //     }, ],
+        // }
 
     ],
     UI.Identification                     : [
@@ -396,6 +407,22 @@ annotate service.CashFlowYear with @(UI.LineItem #AnnualCashFlow: [
         $Type: 'UI.DataField',
         Value: total,
     },
+]);
+
+annotate service.Comments with @(UI.LineItem: [
+    {
+        $Type: 'UI.DataField',
+        Value: icon,
+    },
+    {
+        $Type: 'UI.DataField',
+        Value: info,
+    },
+    {
+        $Type: 'UI.DataField',
+        Value: text,
+    },
+
 ]);
 
 annotate service.Objectives with @(UI.LineItem #Objectives: [
@@ -636,5 +663,3 @@ annotate service.Capex with @(UI.LineItem: {
 },
 
 );
-
-
