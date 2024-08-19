@@ -81,7 +81,7 @@ aspect CapexMain {
   to_Division          : Association to one Division
                            on to_Division.code = division;
 
-  @description: 'Dexcription'
+  @description: 'Description'
   description          : String(80); // KTEXT
 
   @description: 'Business Reasons'

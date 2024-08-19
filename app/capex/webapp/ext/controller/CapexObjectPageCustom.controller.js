@@ -37,9 +37,7 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension', 'sap/m/MessageToast'], fun
 								'D': { type: sap.ui.core.MessageType.None, key: 'isDraft' },
 								'R': { type: sap.ui.core.MessageType.None, key: 'isRejectionFinal' },
 								'A': { type: sap.ui.core.MessageType.Success, key: 'isApproved' }
-							};
-
-						debugger;
+							}
 
 						
 							// Access the list from the fragment
@@ -66,14 +64,12 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension', 'sap/m/MessageToast'], fun
 										path: sPath,
 										template: oFeedListItemTemplate
 									});
-									debugger
 									// // Manually trigger the binding refresh
 									// const oBinding = oList.getBinding("items");
 									// if (oBinding) {
 									// 	await oBinding.requestRefresh(); // Force refresh
 									// }
 								}
-								debugger;
 							}
 						
 						const aContext = oModel.bindContext(oBindingContext.getPath());
@@ -106,7 +102,6 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension', 'sap/m/MessageToast'], fun
 
 		},
 		onPost: function () {
-			debugger;
 			MessageToast.show("Pressed on " + oEvent.getSource().getSender());
 		}
 

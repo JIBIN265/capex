@@ -93,6 +93,23 @@ annotate service.Capex with {
         ]
     }, });
 
+     currency    @(Common: {ValueList: {
+        $Type         : 'Common.ValueListType',
+        CollectionPath: 'CurrencyF4Set',
+        Label         : 'Choose a Currency',
+        Parameters    : [
+            {
+                $Type            : 'Common.ValueListParameterInOut',
+                LocalDataProperty: currency_code,
+                ValueListProperty: 'Waers',
+            },
+            {
+                $Type            : 'Common.ValueListParameterDisplayOnly',
+                ValueListProperty: 'Desc'
+            }
+        ]
+    }, });
+
      businessReason   @(Common: {ValueList: {
         $Type         : 'Common.ValueListType',
         CollectionPath: 'BusinessReasonF4Set',

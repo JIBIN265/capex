@@ -1,7 +1,7 @@
 _schema-version: "3.1"
 ID: capex
 description: Capex
-version: 1.0.12
+version: 1.0.13
 modules:
   - name: capex-srv
     type: nodejs

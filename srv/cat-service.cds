@@ -10,6 +10,7 @@ service CapexCatalogService @(requires: 'authenticated-user') {
     entity DivisionF4Set         as projection on external.DivisionF4Set;
     entity SiteF4Set             as projection on external.SiteF4Set;
     entity MasterDataSet         as projection on external.MasterDataSet;
+    entity CurrencyF4Set         as projection on external.CurrencyF4Set;
 
     entity Capex                 as projection on persistence.CapexEntity
         actions {

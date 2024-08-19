@@ -22,7 +22,8 @@ class CapexCatalogService extends cds.ApplicationService {
             BusinessReasonF4Set,
             DivisionF4Set,
             SiteF4Set,
-            MasterDataSet
+            MasterDataSet,
+            CurrencyF4Set
         } = this.entities;
 
         const db = await cds.connect.to("db");
@@ -30,7 +31,7 @@ class CapexCatalogService extends cds.ApplicationService {
         const ecc = await cds.connect.to('ZODATA_INTERNAL_ORDER_SRV');
 
         this.on('READ', [Cot001Set, OrderTypeF4Set, BusinessReasonF4Set,
-            DivisionF4Set, SiteF4Set], async req => {
+            DivisionF4Set, SiteF4Set, CurrencyF4Set], async req => {
                 return ecc.run(req.query);
             });
 
@@ -40,7 +41,7 @@ class CapexCatalogService extends cds.ApplicationService {
             const { ID } = req.data;
             req.data.status = process.env.DRAFTSTATUS;
             if (!req.data.companyCode) { req.data.companyCode = process.env.COMPANYCODE; }
-            if (!req.data.currency_code) { req.data.currency_code = process.env.CURRENCY; }
+            // if (!req.data.currency_code) { req.data.currency_code = process.env.CURRENCY; }
             // req.data.currency_code = process.env.CURRENCY;
 
             const documentID = new SequenceHelper({
@@ -317,13 +318,35 @@ class CapexCatalogService extends cds.ApplicationService {
 
         this.after('SAVE', Capex, async (_, req) => {
             console.log(req.data);
-            if (!req.data.documentID) { return };
+
             let testData = {
                 "definitionId": "us10.yk2lt6xsylvfx4dz.zcapexworkflow.triggerWorkflow",
                 "context": {
-                    "documentId": req.data.documentID.toString()
+                    "orderNumber": req.data.orderNumber || "",
+                    "orderType": req.data.orderType || "",
+                    "companyCode": req.data.companyCode || "",
+                    "site": req.data.site || "",
+                    "division": req.data.division || "",
+                    "description": req.data.description || "",
+                    "businessReasons": req.data.businessReasons || "",
+                    "amount": req.data.amount || "",
+                    "currency": req.data.currency || "",
+                    "appropriationsCosts": [
+                        {
+                            "millLabor": req.data.millLabor || "",
+                            "maintenanceLabor": req.data.maintenanceLabor || "",
+                            "operationsLabor": req.data.operationsLabor || "",
+                            "outsideContract": req.data.outsideContract || "",
+                            "materialCost": req.data.materialCost || "",
+                            "hardwareCost": req.data.hardwareCost || "",
+                            "softwareCost": req.data.softwareCost || "",
+                            "contingencyCost": req.data.contingencyCost || "",
+                            "totalCost": req.data.totalCost || ""
+                        }
+                    ]
                 }
             };
+
 
             let BPA_WORKFLOW = await cds.connect.to('BPA_WORKFLOW');
 
