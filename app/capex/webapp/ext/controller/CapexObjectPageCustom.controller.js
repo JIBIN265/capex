@@ -13,6 +13,7 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension', 'sap/m/MessageToast'], fun
 				// you can access the Fiori elements extensionAPI via this.base.getExtensionAPI
 				var oModel = this.base.getExtensionAPI().getModel();
 			},
+
 			routing: {
 
 				onAfterBinding: async function (oBindingContext) {
@@ -37,41 +38,27 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension', 'sap/m/MessageToast'], fun
 								'D': { type: sap.ui.core.MessageType.None, key: 'isDraft' },
 								'R': { type: sap.ui.core.MessageType.None, key: 'isRejectionFinal' },
 								'A': { type: sap.ui.core.MessageType.Success, key: 'isApproved' }
-							}
+							};
 
+						debugger;
 						
-							// Access the list from the fragment
-							// const oList = oFragment.getAggregation("content").find(item => item.getId().includes("commentsList"));
-							const oList = oExtensionAPI.byId('capex::CapexObjectPage--fe::CustomSubSection::Feed--commentsList');
-							if (oList) {
-								// Bind the list to /Capex/to_Comments
-								const sPath = `${oBindingContext.getPath()}/to_Comments`;
-								if (oList) {
-									// Define FeedListItem with id
-									const oFeedListItemTemplate = new sap.m.FeedListItem({
-										id: "feedListItemTemplate", 
-										sender: "{createdBy}",
-										icon: "{icon}",
-										info: "{info}",
-										timestamp: "{modifiedAt}",
-										text: "{text}",
-										convertLinksToAnchorTags: "All"
-									});
+						// const oFeedListItemTemplate = oExtensionAPI.byId('capex::CapexObjectPage--fe::CustomSubSection::Feed--feedListItemTemplate')
+						// if (oList) {
+						// 	// Bind the list to /Capex/to_Comments
+						// 	const sPath = `${oBindingContext.getPath()}/to_Comments`;
+						// 	if (oList) {
+							
+						// 		oList.bindItems({
+						// 			path: sPath,
+						// 			template: oFeedListItemTemplate,
+						// 			templateShareable: false
+						// 		});
+						// 		oList.getBinding("items").refresh();
+						// 		// oBindingContext.refresh();
+						// 	}
+						// 	debugger;
+						// }
 
-									// Bind the list to /Capex/to_Comments
-									const sPath = `${oBindingContext.getPath()}/to_Comments`;
-									oList.bindItems({
-										path: sPath,
-										template: oFeedListItemTemplate
-									});
-									// // Manually trigger the binding refresh
-									// const oBinding = oList.getBinding("items");
-									// if (oBinding) {
-									// 	await oBinding.requestRefresh(); // Force refresh
-									// }
-								}
-							}
-						
 						const aContext = oModel.bindContext(oBindingContext.getPath());
 						// Request the Entity
 						aContext.requestObject().then(data => {
@@ -98,12 +85,18 @@ sap.ui.define(['sap/ui/core/mvc/ControllerExtension', 'sap/m/MessageToast'], fun
 
 			},
 
-
+			// onBeforeNavigate: function () {
+			// 	debugger;
+			// 	const oExtensionAPI = this.base.getExtensionAPI();
+			// 	const oList = oExtensionAPI.byId('capex::CapexObjectPage--fe::CustomSubSection::Feed--commentsList');
+			// 	if (oList) {
+			// 		// Clear the list items
+			// 		oList.removeAllItems();
+			// 	}
+			// }
 
 		},
-		onPost: function () {
-			MessageToast.show("Pressed on " + oEvent.getSource().getSender());
-		}
+
 
 
 	});

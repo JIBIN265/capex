@@ -7,19 +7,19 @@ sap.ui.define([
 
     return {
         onPost: async function (oEvent) {
-            // Get the FeedInput control from the event source or the view
             debugger;
-            var oFeedInput = oEvent.getSource();
-            var sNewComment = oFeedInput.getValue();
-            var sValue = oEvent.getParameter("value");
-            // Get the binding context of the FeedInput control
-            var oContext = oFeedInput.getBindingContext();
+            MessageToast.show("Adding comment.");
+            // Get the control that fired the event
+            var oControl = oEvent.getSource();
 
-            // Check if the context is valid
+            // Get the binding context of the control
+            var oContext = oControl.getBindingContext();
             if (!oContext) {
                 MessageToast.show("No context found.");
                 return;
             }
+            var sNewComment = oControl.getValue();
+            var sValue = oEvent.getParameter("value");
 
             // Prepare the new comment entry
             var oNewComment = {
@@ -29,26 +29,79 @@ sap.ui.define([
 
             // Get the ODataModel from the context
             var oModel = oContext.getModel();
+            var sPath = oContext.getPath() + "/to_Comments";
 
-            // Create the new comment entry in the context
-            oModel.create("/to_Comments", oNewComment, {
-                context: oContext,
-                success: function () {
-                    MessageToast.show("Comment added successfully!");
-                    oFeedInput.setValue(""); // Clear the input field
-                },
-                error: function () {
-                    MessageToast.show("Error adding comment.");
+            // Get the binding context for 'to_Comments'
+            var oListBinding = oModel.bindList(sPath, oContext);
+
+            // Prepare the new comment entry
+            var oNewComment = {
+                text: sNewComment,
+                // Add other required properties if needed
+            };
+            debugger;
+            try {
+                // Create the new entry in the context
+                await oListBinding.create(oNewComment);
+
+                // Submit changes
+                await oModel.submitBatch(oModel.getUpdateGroupId());
+
+                MessageToast.show("Comment added successfully!");
+                oControl.setValue(""); // Clear the input field
+
+                const oList = this.byId('capex::CapexObjectPage--fe::CustomSubSection::Feed--commentsList');
+                if (oList) {
+                    oContext.refresh();
+                } else {
+                    MessageToast.show("Unable to refresh the comments list.");
                 }
-            });
+
+            } catch (oError) {
+                MessageToast.show(oError.message);
+            }
+            // Get the FeedInput control from the event source or the view
+            //         debugger;
+            //         var oFeedInput = oEvent.getSource();
+            //         var sNewComment = oFeedInput.getValue();
+            //         var sValue = oEvent.getParameter("value");
+            //         // Get the binding context of the FeedInput control
+            //         var oContext = oFeedInput.getBindingContext();
+
+            //         // Check if the context is valid
+            //         if (!oContext) {
+            //             MessageToast.show("No context found.");
+            //             return;
+            //         }
+
+            //         // Prepare the new comment entry
+            //         var oNewComment = {
+            //             text: sNewComment,
+            //             // Add other required properties if needed
+            //         };
+
+            //         // Get the ODataModel from the context
+            //         var oModel = oContext.getModel();
+
+            //         // Create the new comment entry in the context
+            //         oModel.create("/to_Comments", oNewComment, {
+            //             context: oContext,
+            //             success: function () {
+            //                 MessageToast.show("Comment added successfully!");
+            //                 oFeedInput.setValue(""); // Clear the input field
+            //             },
+            //             error: function () {
+            //                 MessageToast.show("Error adding comment.");
+            //             }
+            //         });
         },
 
-        onSenderPress: function (oEvent) {
-            // Handle sender press event
-        },
+        //     onSenderPress: function (oEvent) {
+        //         // Handle sender press event
+        //     },
 
-        onIconPress: function (oEvent) {
-            // Handle icon press event
-        }
+        //     onIconPress: function (oEvent) {
+        //         // Handle icon press event
+        //     }
     };
 });

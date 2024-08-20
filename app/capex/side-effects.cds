@@ -36,3 +36,8 @@ annotate service.Capex @(Common: {SideEffects #pr_enabledChanged: {
     ],
     TargetProperties: ['totalCost']
 }});
+
+annotate service.Comments @(Common: {SideEffects #CommentsChanged: {
+    SourceEntities: [],
+    TargetEntities: ['up_']
+}});
