@@ -216,7 +216,7 @@ entity CapexEntity : cuid, managed, CapexMain, DocumentId, messageImport {
   to_Comments         : Composition of many Comments;
 
   @description: 'Attachments Composition'
-  to_Attachments      : Composition of many Attachments;
+  attachments      : Composition of many Attachments;
 };
 
 aspect Comments : cuid, managed {
