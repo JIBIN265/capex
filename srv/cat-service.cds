@@ -37,13 +37,18 @@ service CapexCatalogService @(requires: 'authenticated-user') {
                 Common.SideEffects             : {TargetEntities: ['$Return']}
             )
             action rejectIncomplete(in : $self) returns Capex;
+
+            action workflowAction() returns{
+                status : String(5);
+                orderNumber : String(12);
+            }
         };
 
     entity Comments              as projection on persistence.CapexEntity.to_Comments;
     entity CashFlowYear          as projection on persistence.CapexEntity.to_CashFlowYear;
     entity Objectives            as projection on persistence.CapexEntity.to_Objectives;
     entity RejectionReasons      as projection on persistence.CapexEntity.to_RejectionReasons;
-    entity Attachments           as projection on persistence.CapexEntity.to_Attachments;
+    entity Attachments           as projection on persistence.CapexEntity.attachments;
 
     @readonly
     entity CompanyCode           as projection on persistence.CompanyCode;
