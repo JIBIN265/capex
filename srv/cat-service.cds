@@ -43,6 +43,7 @@ service CapexCatalogService @(requires: 'authenticated-user') {
     entity CashFlowYear          as projection on persistence.CapexEntity.to_CashFlowYear;
     entity Objectives            as projection on persistence.CapexEntity.to_Objectives;
     entity RejectionReasons      as projection on persistence.CapexEntity.to_RejectionReasons;
+    entity Attachments           as projection on persistence.CapexEntity.to_Attachments;
 
     @readonly
     entity CompanyCode           as projection on persistence.CompanyCode;
