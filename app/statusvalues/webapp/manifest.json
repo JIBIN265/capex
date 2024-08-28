@@ -1,7 +1,7 @@
 {
   "_version": "1.59.0",
   "sap.app": {
-    "id": "status",
+    "id": "statusvalues",
     "type": "application",
     "i18n": "i18n/i18n.properties",
     "applicationVersion": {
@@ -13,7 +13,7 @@
     "sourceTemplate": {
       "id": "@sap/generator-fiori:lrop",
       "version": "1.14.4",
-      "toolsId": "7aba8665-45e5-467b-a5ef-70aeeb5be49a"
+      "toolsId": "a17b4ca1-d08b-4c1f-b7b1-fc72d7201d69"
     },
     "dataSources": {
       "mainService": {
@@ -27,8 +27,8 @@
     },
     "crossNavigation": {
       "inbounds": {
-        "Zstatus-manage": {
-          "semanticObject": "Zstatus",
+        "Zstatusvalues-manage": {
+          "semanticObject": "Zstatusvalues",
           "action": "manage",
           "title": "{{flpTitle}}",
           "signature": {
@@ -63,7 +63,8 @@
         "sap.m": {},
         "sap.ui.core": {},
         "sap.ushell": {},
-        "sap.fe.templates": {}
+        "sap.fe.templates": {},
+        "sap.f": {}
       }
     },
     "contentDensities": {
@@ -74,7 +75,7 @@
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
-          "bundleName": "status.i18n.i18n"
+          "bundleName": "statusvalues.i18n.i18n"
         }
       },
       "": {
@@ -95,17 +96,28 @@
       "css": []
     },
     "routing": {
-      "config": {},
+      "config": {
+        "flexibleColumnLayout": {
+          "defaultTwoColumnLayoutType": "TwoColumnsMidExpanded",
+          "defaultThreeColumnLayoutType": "ThreeColumnsMidExpanded"
+        },
+        "routerClass": "sap.f.routing.Router"
+      },
       "routes": [
         {
           "pattern": ":?query:",
           "name": "StatusValuesList",
-          "target": "StatusValuesList"
+          "target": [
+            "StatusValuesList"
+          ]
         },
         {
           "pattern": "StatusValues({key}):?query:",
           "name": "StatusValuesObjectPage",
-          "target": "StatusValuesObjectPage"
+          "target": [
+            "StatusValuesList",
+            "StatusValuesObjectPage"
+          ]
         }
       ],
       "targets": {
@@ -130,9 +142,12 @@
                     "type": "ResponsiveTable"
                   }
                 }
-              }
+              },
+              "initialLoad": "Enabled"
             }
-          }
+          },
+          "controlAggregation": "beginColumnPages",
+          "contextPattern": ""
         },
         "StatusValuesObjectPage": {
           "type": "Component",
@@ -143,9 +158,17 @@
               "editableHeaderContent": false,
               "contextPath": "/StatusValues"
             }
-          }
+          },
+          "controlAggregation": "midColumnPages",
+          "contextPattern": "/StatusValues({key})"
         }
       }
+    },
+    "rootView": {
+      "viewName": "sap.fe.templates.RootContainer.view.Fcl",
+      "type": "XML",
+      "async": true,
+      "id": "appRootView"
     }
   },
   "sap.fiori": {

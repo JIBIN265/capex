@@ -11,19 +11,32 @@ service CapexCatalogService @(requires: 'authenticated-user') {
     entity SiteF4Set             as projection on external.SiteF4Set;
     entity MasterDataSet         as projection on external.MasterDataSet;
     entity CurrencyF4Set         as projection on external.CurrencyF4Set;
+    entity ChangeStatusSet       as projection on external.ChangeStatusSet;
 
     entity Capex                 as projection on persistence.CapexEntity
         actions {
             // @(
             //     cds.odata.bindingparameter.name: '_it',
-            //     Common.SideEffects             : {TargetEntities: ['_it']}
+            //     Common.SideEffects             : {TargetProperties: ['_it']}
             // )
-            action copyCapex(in : $self) returns Capex;
-            action validate()            returns Capex;
+            action copyCapex(in : $self)        returns Capex;
+            action validate()                   returns Capex;
             @(Common.IsActionCritical: true)
-            action approve()             returns Capex;
-            action rejectFinal()         returns Capex;
-            action rejectIncomplete()    returns Capex;
+            @(
+                cds.odata.bindingparameter.name: '_it',
+                Common.SideEffects             : {TargetEntities: ['$Return']}
+            )
+            action approve(in : $self)          returns Capex;
+            @(
+                cds.odata.bindingparameter.name: '_it',
+                Common.SideEffects             : {TargetEntities: ['$Return']}
+            )
+            action rejectFinal(in : $self)      returns Capex;
+            @(
+                cds.odata.bindingparameter.name: '_it',
+                Common.SideEffects             : {TargetEntities: ['$Return']}
+            )
+            action rejectIncomplete(in : $self) returns Capex;
         };
 
     entity Comments              as projection on persistence.CapexEntity.to_Comments;
@@ -43,7 +56,6 @@ service CapexCatalogService @(requires: 'authenticated-user') {
     @readonly
     entity BusinessReason        as projection on persistence.BusinessReason;
 
-    @readonly
     entity StatusValues          as projection on persistence.StatusValues;
 
     @readonly

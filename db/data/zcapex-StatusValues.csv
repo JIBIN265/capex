@@ -1,7 +1,7 @@
 code,value,criticality,deletePossible,insertPossible,updatePossible
 N,In Progress,5,true,true,true
-A,Approved,3,true,true,true
+E0009,Approved,3,true,true,true
 X,Expired,0,false,false,false
-I,Rejection Incomplete,2,true,true,true
-R,Rejection Final,1,true,true,true
+E0011,Rejection Incomplete,2,true,true,true
+E0010,Rejection Final,1,true,true,true
 D,Draft,4,true,true,true

@@ -1,7 +1,7 @@
 _schema-version: "3.1"
 ID: capex
 description: Capex
-version: 1.0.0
+version: 1.0.5
 modules:
 - name: capex-srv
   type: nodejs
@@ -102,8 +102,8 @@ modules:
       name: capex
       target-path: resources/
     - artifacts:
-      - status.zip
-      name: status
+      - statusvalues.zip
+      name: statusvalues
       target-path: resources/
 - name: capex
   type: html5
@@ -115,9 +115,9 @@ modules:
     - npm install
     - npm run build:cf
     supported-platforms: []
-- name: status
+- name: statusvalues
   type: html5
-  path: app/status
+  path: app/statusvalues
   build-parameters:
     build-result: dist
     builder: custom

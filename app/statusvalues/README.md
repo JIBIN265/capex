@@ -1,14 +1,14 @@
 ## Application Details
 |               |
 | ------------- |
-|**Generation Date and Time**<br>Mon Aug 19 2024 22:31:58 GMT+0000 (Coordinated Universal Time)|
+|**Generation Date and Time**<br>Mon Aug 26 2024 15:04:31 GMT+0000 (Coordinated Universal Time)|
 |**App Generator**<br>@sap/generator-fiori-elements|
 |**App Generator Version**<br>1.14.4|
 |**Generation Platform**<br>SAP Business Application Studio|
 |**Template Used**<br>List Report Page V4|
 |**Service Type**<br>Local Cap|
 |**Service URL**<br>http://localhost:4004/odata/v4/capex-catalog/|
-|**Module Name**<br>status|
+|**Module Name**<br>statusvalues|
 |**Application Title**<br>Maintain Status Values|
 |**Namespace**<br>|
 |**UI5 Theme**<br>sap_horizon|
@@ -18,7 +18,7 @@
 |**Add Eslint configuration**<br>False|
 |**Main Entity**<br>StatusValues|
 
-## status
+## statusvalues
 
 Maintain Status Values
 
@@ -26,7 +26,7 @@ Maintain Status Values
 
 -   This app has been generated using the SAP Fiori tools - App Generator, as part of the SAP Fiori tools suite.  In order to launch the generated app, simply start your CAP project and navigate to the following location in your browser:
 
-http://localhost:4004/status/webapp/index.html
+http://localhost:4004/statusvalues/webapp/index.html
 
 #### Pre-requisites:
 

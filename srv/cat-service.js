@@ -23,7 +23,8 @@ class CapexCatalogService extends cds.ApplicationService {
             DivisionF4Set,
             SiteF4Set,
             MasterDataSet,
-            CurrencyF4Set
+            CurrencyF4Set,
+            ChangeStatusSet
         } = this.entities;
 
         const db = await cds.connect.to("db");
@@ -47,10 +48,8 @@ class CapexCatalogService extends cds.ApplicationService {
                 if (Array.isArray(masterData)) {
                     // Insert new records from MasterDataSet to local DB
                     await Promise.all(masterData.map(async (item) => {
-                        // Check if the record already exists in the local DB
-                        const bpID = item.orderNumber
                         const existingRecord = await db.run(
-                            SELECT.from(Capex).where({ orderNumber: bpID })
+                            SELECT.from(Capex).where({ orderNumber: item.orderNumber })
                         );
 
                         if (existingRecord.length === 0) {
@@ -103,6 +102,7 @@ class CapexCatalogService extends cds.ApplicationService {
                                 insuranceApproval: item.insuranceApproval,
                                 businessArea: item.businessArea,
                                 controllingArea: item.controllingArea,
+                                status: item.status,
                                 stonr: item.stonr
                             });
                             await db.run(insertStmt);
@@ -354,9 +354,6 @@ class CapexCatalogService extends cds.ApplicationService {
 
             console.log("SAP", data);
 
-
-            // let result = await ecc.run(INSERT.into(MasterDataSet).entries(data));
-
             let errorMessage = '';
             let successData = null;
 
@@ -434,15 +431,29 @@ class CapexCatalogService extends cds.ApplicationService {
 
             let BPA_WORKFLOW = await cds.connect.to('BPA_WORKFLOW');
 
-            let response = await BPA_WORKFLOW.send('POST', '/', testData);
+          //  let response = await BPA_WORKFLOW.send('POST', '/', testData);
 
-            if (response.status >= 200 && response.status < 300) {
-                debugger;
-                console.log('Success:', response.data);
-            } else {
-                debugger;
-                console.log('Error:', response.status, response.statusText);
-            }
+            // if (response.status >= 200 && response.status < 300) {
+
+
+            //     console.log('Success:', response.data);
+
+            //     // Assuming response.data contains the approval status
+            //     if (response.data.approvalStatus === 'APPROVED') {
+            //         // Perform action for approval
+            //         console.log('Action for approval');
+            //         // Add your code here
+            //     } else if (response.data.approvalStatus === 'REJECTED') {
+            //         // Perform action for rejection
+            //         console.log('Action for rejection');
+            //         // Add your code here
+            //     } else {
+            //         console.log('Unknown status:', response.data.approvalStatus);
+            //     }
+        //     } else {
+        //         debugger;
+        //         console.log('Error:', response.status, response.statusText);
+        //     }
         });
 
         this.on('copyCapex', async (req) => {
@@ -503,15 +514,68 @@ class CapexCatalogService extends cds.ApplicationService {
         this.on("validate", async req => {
             return req.notify(`Validate action pressed`); //Search-Term: #MessageToast
         });
-        this.on("approve", async req => {
-            return req.notify(`Approve action pressed`); //Search-Term: #MessageToast
+
+
+        async function statusChange(req, ID, newStatus) {
+            try {
+                const updatedDbRecord = await db.run(
+                    UPDATE(Capex)
+                        .set({ status: newStatus })
+                        .where({ ID: ID })
+                );
+
+                if (!updatedDbRecord) {
+                    return req.error(404, `Record with ID ${ID} not found in the local DB.`);
+                }
+
+                const record = await db.run(SELECT.one.from(Capex).where({ ID: ID }));
+                const eccPayload = {
+                    orderNumber: record.orderNumber,
+                    status: newStatus,
+                };
+
+                let successData = null;
+                let updateQuery = INSERT.into('ChangeStatusSet', [eccPayload])
+
+                let result = await ecc.tx(req).run(updateQuery)
+                successData = result;
+                req.data.status = successData.status;
+                req.notify(`Status updated to ${newStatus} for order ${record.orderNumber} in both DB and ECC`);
+
+            } catch (error) {
+                if (error.code) {
+                    errorMessage = error.message || "An exception was raised.";
+
+                    // Extract more detailed error information if available
+                    if (error.innerError && error.innerError.errordetails) {
+                        error.innerError.errordetails.forEach(detail => {
+                            errorMessage += `\n${detail.code}: ${detail.message}`;
+                        });
+                    }
+                } else {
+                    errorMessage = "An unexpected error occurred";
+                }
+            }
+        }
+
+        this.on("approve", async (req) => {
+            const { ID } = req.params[0];
+            const newStatus = "E0009";
+            await statusChange(req, ID, newStatus);
         });
-        this.on("rejectFinal", async req => {
-            return req.notify(`Final Reject action pressed`); //Search-Term: #MessageToast
+
+        this.on("rejectFinal", async (req) => {
+            const { ID } = req.params[0];
+            const newStatus = "E0010";
+            await statusChange(req, ID, newStatus);
         });
-        this.on("rejectIncomplete", async req => {
-            return req.notify(`Incomplete Reject action pressed`); //Search-Term: #MessageToast
+
+        this.on("rejectIncomplete", async (req) => {
+            const { ID } = req.params[0];
+            const newStatus = "E0011";
+            await statusChange(req, ID, newStatus);
         });
+
         return super.init();
     }
 }

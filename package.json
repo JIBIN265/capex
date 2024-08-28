@@ -99,7 +99,6 @@
   ],
   "sapux": [
     "app/capex",
-    "app/capex",
-    "app/status"
+    "app/statusvalues"
   ]
 }
