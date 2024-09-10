@@ -38,8 +38,22 @@ service CapexCatalogService @(requires: 'authenticated-user') {
             )
             action rejectIncomplete(in : $self) returns Capex;
 
-            action workflowAction() returns{
-                status : String(5);
+            @(
+                cds.odata.bindingparameter.name: '_it',
+                Common.SideEffects             : {TargetEntities: ['_it']}
+            )
+            action workflowApprove()            returns {
+                status : String(10);
+                orderNumber : String(12);
+            };
+
+            action workflowIncomplete()         returns {
+                status : String(10);
+                orderNumber : String(12);
+            };
+
+            action workflowFinal()              returns {
+                status : String(10);
                 orderNumber : String(12);
             }
         };

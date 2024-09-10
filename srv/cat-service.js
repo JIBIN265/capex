@@ -341,7 +341,7 @@ class CapexCatalogService extends cds.ApplicationService {
             let data = JSON.parse(JSON.stringify(req.data));
             // Delete unnecessary fields
             const fieldsToDelete = [
-                'currency_code', 'to_CashFlowYear', 'to_Objectives', 'to_Attachments', 'to_RejectionReasons',
+                'currency_code', 'to_CashFlowYear', 'to_Objectives', 'attachments', 'to_RejectionReasons',
                 'ID', 'status', 'documentID', 'notes', 'numericSeverity', 'to_Comments', 'downtime', 'appropriationLife'
             ];
             fieldsToDelete.forEach(field => delete data[field]);
@@ -403,57 +403,42 @@ class CapexCatalogService extends cds.ApplicationService {
             let testData = {
                 "definitionId": "us10.yk2lt6xsylvfx4dz.zcapexworkflow.triggerWorkflow",
                 "context": {
-                    "orderNumber": req.data.orderNumber || "",
-                    "orderType": req.data.orderType || "",
-                    "companyCode": req.data.companyCode || "",
-                    "site": req.data.site || "",
-                    "division": req.data.division || "",
-                    "description": req.data.description || "",
-                    "businessReasons": req.data.businessReasons || "",
-                    "amount": req.data.amount || "",
-                    "currency": req.data.currency || "",
+                    "orderNumber": String(req.data.orderNumber || ""),
+                    "orderType": String(req.data.orderType || ""),
+                    "companyCode": String(req.data.companyCode || ""),
+                    "site": String(req.data.site || ""),
+                    "division": String(req.data.division || ""),
+                    "description": String(req.data.description || ""),
+                    "businessReasons": req.data.businessReason || "",
+                    "amount": String(req.data.amount || ""),
+                    "currency": req.data.currency_code || "",
                     "appropriationsCosts": [
                         {
-                            "millLabor": req.data.millLabor || "",
-                            "maintenanceLabor": req.data.maintenanceLabor || "",
-                            "operationsLabor": req.data.operationsLabor || "",
-                            "outsideContract": req.data.outsideContract || "",
-                            "materialCost": req.data.materialCost || "",
-                            "hardwareCost": req.data.hardwareCost || "",
-                            "softwareCost": req.data.softwareCost || "",
-                            "contingencyCost": req.data.contingencyCost || "",
-                            "totalCost": req.data.totalCost || ""
+                            "millLabor": String(req.data.millLabor || ""),
+                            "maintenanceLabor": String(req.data.maintenanceLabor || ""),
+                            "operationsLabor": String(req.data.operationsLabor || ""),
+                            "outsideContract": String(req.data.outsideContract || ""),
+                            "materialCost": String(req.data.materialCost || ""),
+                            "hardwareCost": String(req.data.hardwareCost || ""),
+                            "softwareCost": String(req.data.softwareCost || ""),
+                            "contingencyCost": String(req.data.contingencyCost || ""),
+                            "totalCost": String(req.data.totalCost || "")
                         }
-                    ]
+                    ],
+                    "_id": String(req.data.ID || "")
                 }
             };
 
 
             let BPA_WORKFLOW = await cds.connect.to('BPA_WORKFLOW');
 
-          //  let response = await BPA_WORKFLOW.send('POST', '/', testData);
+            let response = await BPA_WORKFLOW.send('POST', '/', testData);
 
-            // if (response.status >= 200 && response.status < 300) {
-
-
-            //     console.log('Success:', response.data);
-
-            //     // Assuming response.data contains the approval status
-            //     if (response.data.approvalStatus === 'APPROVED') {
-            //         // Perform action for approval
-            //         console.log('Action for approval');
-            //         // Add your code here
-            //     } else if (response.data.approvalStatus === 'REJECTED') {
-            //         // Perform action for rejection
-            //         console.log('Action for rejection');
-            //         // Add your code here
-            //     } else {
-            //         console.log('Unknown status:', response.data.approvalStatus);
-            //     }
-        //     } else {
-        //         debugger;
-        //         console.log('Error:', response.status, response.statusText);
-        //     }
+            if (response.status >= 200 && response.status < 300) {
+                console.log('Success:', response.data);
+            } else {
+                console.log('Error:', response.status, response.statusText);
+            }
         });
 
         this.on('copyCapex', async (req) => {
@@ -541,6 +526,11 @@ class CapexCatalogService extends cds.ApplicationService {
                 successData = result;
                 req.data.status = successData.status;
                 req.notify(`Status updated to ${newStatus} for order ${record.orderNumber} in both DB and ECC`);
+                let finalReturn = {
+                    orderNumber: record.orderNumber,
+                    status: "Success",
+                }
+                return req.reply(finalReturn);
 
             } catch (error) {
                 if (error.code) {
@@ -552,8 +542,18 @@ class CapexCatalogService extends cds.ApplicationService {
                             errorMessage += `\n${detail.code}: ${detail.message}`;
                         });
                     }
+                    let finalReturn = {
+                        orderNumber: record.orderNumber,
+                        status: "Error",
+                    }
+                    return req.reply(finalReturn);
                 } else {
                     errorMessage = "An unexpected error occurred";
+                    let finalReturn = {
+                        orderNumber: record.orderNumber,
+                        status: "Error",
+                    }
+                    return req.reply(finalReturn);
                 }
             }
         }
@@ -571,6 +571,24 @@ class CapexCatalogService extends cds.ApplicationService {
         });
 
         this.on("rejectIncomplete", async (req) => {
+            const { ID } = req.params[0];
+            const newStatus = "E0011";
+            await statusChange(req, ID, newStatus);
+        });
+
+        this.on("workflowApprove", async (req) => {
+            const { ID } = req.params[0];
+            const newStatus = "E0009";
+            await statusChange(req, ID, newStatus);
+        });
+
+        this.on("workflowFinal", async (req) => {
+            const { ID } = req.params[0];
+            const newStatus = "E0010";
+            await statusChange(req, ID, newStatus);
+        });
+
+        this.on("workflowIncomplete", async (req) => {
             const { ID } = req.params[0];
             const newStatus = "E0011";
             await statusChange(req, ID, newStatus);
