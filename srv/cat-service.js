@@ -532,7 +532,9 @@ class CapexCatalogService extends cds.ApplicationService {
         this.on("validate", async req => {
             return req.notify(`Validate action pressed`); //Search-Term: #MessageToast
         });
-
+        this.on("rejectFinal2", async req => {
+            return req.notify(`Reject final action pressed`); //Search-Term: #MessageToast
+        });
 
         async function statusChange(req, ID, newStatus) {
             try {
@@ -567,7 +569,7 @@ class CapexCatalogService extends cds.ApplicationService {
 
             } catch (error) {
                 if (error.code) {
-                    errorMessage = error.message || "An exception was raised.";
+                   let errorMessage = error.message || "An exception was raised.";
 
                     // Extract more detailed error information if available
                     if (error.innerError && error.innerError.errordetails) {
@@ -576,14 +578,14 @@ class CapexCatalogService extends cds.ApplicationService {
                         });
                     }
                     let finalReturn = {
-                        orderNumber: record.orderNumber,
+                        orderNumber: errorMessage,
                         status: "Error",
                     }
                     return req.reply(finalReturn);
                 } else {
-                    errorMessage = "An unexpected error occurred";
+                    let errorMessage = "An unexpected error occurred";
                     let finalReturn = {
-                        orderNumber: record.orderNumber,
+                        orderNumber: errorMessage,
                         status: "Error",
                     }
                     return req.reply(finalReturn);

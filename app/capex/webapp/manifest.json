@@ -353,7 +353,7 @@
                       "text": "{i18n>reject}",
                       "menu": [
                         "DataFieldForAction::CapexCatalogService.rejectIncomplete",
-                        "DataFieldForAction::CapexCatalogService.rejectFinal"
+                        "DataFieldForAction::CapexCatalogService.rejectFinal2"
                       ]
                     },
                     "DataFieldForAction::CapexCatalogService.approve": {
@@ -483,7 +483,7 @@
                       "text": "{i18n>reject}",
                       "menu": [
                         "DataFieldForAction::CapexCatalogService.rejectIncomplete",
-                        "DataFieldForAction::CapexCatalogService.rejectFinal"
+                        "DataFieldForAction::CapexCatalogService.rejectFinal2"
                       ]
                     },
                     "DataFieldForAction::CapexCatalogService.copyCapex": {

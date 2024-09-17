@@ -13,46 +13,55 @@ service CapexCatalogService @(requires: 'authenticated-user') {
     entity CurrencyF4Set         as projection on external.CurrencyF4Set;
     entity ChangeStatusSet       as projection on external.ChangeStatusSet;
 
+    type inText : {
+        comment : String;
+    };
+
     entity Capex                 as projection on persistence.CapexEntity
         actions {
             // @(
             //     cds.odata.bindingparameter.name: '_it',
             //     Common.SideEffects             : {TargetProperties: ['_it']}
             // )
-            action copyCapex(in : $self)        returns Capex;
-            action validate()                   returns Capex;
+            action copyCapex(in : $self)               returns Capex;
+            action validate()                          returns Capex;
             @(Common.IsActionCritical: true)
             @(
                 cds.odata.bindingparameter.name: '_it',
                 Common.SideEffects             : {TargetEntities: ['$Return']}
             )
-            action approve(in : $self)          returns Capex;
+            action approve(in : $self)                 returns Capex;
             @(
                 cds.odata.bindingparameter.name: '_it',
                 Common.SideEffects             : {TargetEntities: ['$Return']}
             )
-            action rejectFinal(in : $self)      returns Capex;
+            action rejectFinal(in : $self)             returns Capex;
             @(
                 cds.odata.bindingparameter.name: '_it',
                 Common.SideEffects             : {TargetEntities: ['$Return']}
             )
-            action rejectIncomplete(in : $self) returns Capex;
+            action rejectFinal2(text : inText:comment) returns Capex;
+            @(
+                cds.odata.bindingparameter.name: '_it',
+                Common.SideEffects             : {TargetEntities: ['$Return']}
+            )
+            action rejectIncomplete(in : $self)        returns Capex;
 
             @(
                 cds.odata.bindingparameter.name: '_it',
                 Common.SideEffects             : {TargetEntities: ['_it']}
             )
-            action workflowApprove()            returns {
+            action workflowApprove()                   returns {
                 status : String(10);
                 orderNumber : String(12);
             };
 
-            action workflowIncomplete()         returns {
+            action workflowIncomplete()                returns {
                 status : String(10);
                 orderNumber : String(12);
             };
 
-            action workflowFinal()              returns {
+            action workflowFinal()                     returns {
                 status : String(10);
                 orderNumber : String(12);
             }

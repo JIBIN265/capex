@@ -290,28 +290,28 @@ annotate service.Capex with @(
             ID    : 'Objectives',
             Target: 'to_Objectives/@UI.LineItem#Objectives',
         },
-        // {
-        //     $Type : 'UI.CollectionFacet',
-        //     ID    : 'CapexNotesId',
-        //     Label : '{i18n>notes}',
-        //     Facets: [{
-        //         $Type : 'UI.ReferenceFacet',
-        //         Target: '@UI.FieldGroup#Notes',
-        //         ID    : 'CapexpReferenceNotesId',
-        //         Label : ''
-        //     }, ],
-        // },
-        //  {
-        //     $Type : 'UI.CollectionFacet',
-        //     ID    : 'CapexTestId',
-        //     Label : '{i18n>notes2}',
-        //     Facets: [{
-        //         $Type : 'UI.ReferenceFacet',
-        //         Target: 'to_Comments/@UI.LineItem',
-        //         ID    : 'CapexpReferenceTestId',
-        //         Label : ''
-        //     }, ],
-        // }
+    // {
+    //     $Type : 'UI.CollectionFacet',
+    //     ID    : 'CapexNotesId',
+    //     Label : '{i18n>notes}',
+    //     Facets: [{
+    //         $Type : 'UI.ReferenceFacet',
+    //         Target: '@UI.FieldGroup#Notes',
+    //         ID    : 'CapexpReferenceNotesId',
+    //         Label : ''
+    //     }, ],
+    // },
+    //  {
+    //     $Type : 'UI.CollectionFacet',
+    //     ID    : 'CapexTestId',
+    //     Label : '{i18n>notes2}',
+    //     Facets: [{
+    //         $Type : 'UI.ReferenceFacet',
+    //         Target: 'to_Comments/@UI.LineItem',
+    //         ID    : 'CapexpReferenceTestId',
+    //         Label : ''
+    //     }, ],
+    // }
 
     ],
     UI.Identification                     : [
@@ -344,7 +344,11 @@ annotate service.Capex with @(
             Action: 'CapexCatalogService.rejectFinal',
             Label : '{i18n>rejectFinal}',
         },
-
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'CapexCatalogService.rejectFinal2',
+            Label : '{i18n>rejectFinal}',
+        },
     ],
     UI.SelectionFields                    : [
         documentID,
@@ -619,9 +623,14 @@ annotate service.Capex with @(UI.LineItem: {
             Action: 'CapexCatalogService.rejectIncomplete',
             Label : '{i18n>rejectIncomplete}',
         },
-        {
+        // {
+        //     $Type : 'UI.DataFieldForAction',
+        //     Action: 'CapexCatalogService.rejectFinal',
+        //     Label : '{i18n>rejectFinal}',
+        // },
+         {
             $Type : 'UI.DataFieldForAction',
-            Action: 'CapexCatalogService.rejectFinal',
+            Action: 'CapexCatalogService.rejectFinal2',
             Label : '{i18n>rejectFinal}',
         },
         {
@@ -665,16 +674,15 @@ annotate service.Capex with @(UI.LineItem: {
 );
 
 annotate service.Capex with @(
-    UI.SelectionVariant #SelectionVariantAll    : {
+    UI.SelectionVariant #SelectionVariantAll       : {
         Text         : 'All Orders',
         ID           : 'SelectionVariantAll',
         SelectOptions: [{PropertyName: status}]
     },
-    UI.SelectionVariant #SelectionVariantApproved : {
+    UI.SelectionVariant #SelectionVariantApproved  : {
         ID           : 'SelectionVariantApproved',
         Text         : 'Approved',
-        SelectOptions: [ 
-        {
+        SelectOptions: [{
             PropertyName: status,
             Ranges      : [{
                 Sign  : #I,
@@ -683,7 +691,7 @@ annotate service.Capex with @(
             }, ],
         }, ],
     },
-    UI.SelectionVariant #SelectionVariantFinal: {
+    UI.SelectionVariant #SelectionVariantFinal     : {
         ID           : 'SelectionVariantFinal',
         Text         : 'Rejected Final',
         SelectOptions: [{
@@ -695,7 +703,7 @@ annotate service.Capex with @(
             }, ],
         }, ],
     },
-     UI.SelectionVariant #SelectionVariantIncomplete: {
+    UI.SelectionVariant #SelectionVariantIncomplete: {
         ID           : 'SelectionVariantIncomplete',
         Text         : 'Rejected Incomplete',
         SelectOptions: [{
@@ -708,3 +716,26 @@ annotate service.Capex with @(
         }, ],
     },
 );
+
+
+// annotate service.Capex with @(UI.SelectionPresentationVariant #SelectionPresentationVariant: {
+//     Text               : '{i18n>SelectionPresentationVariant}',
+//     SelectionVariant   : {
+//         $Type        : 'UI.SelectionVariantType',
+//         SelectOptions: [{
+//             PropertyName: createdBy,
+//             Ranges      : [{
+//                 Sign  : #I,
+//                 Option: #EQ,
+//                 Low   : createdBy
+//             }, ],
+//         }, ],
+//     },
+//     PresentationVariant: {
+//         SortOrder     : [{
+//             Property  : documentID,
+//             Descending: false,
+//         }, ],
+//         Visualizations: ['@UI.LineItem#simplified', ],
+//     },
+// }, );

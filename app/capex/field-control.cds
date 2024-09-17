@@ -61,3 +61,6 @@ annotate service.CashFlowYear {
 
 
 };
+
+annotate service.inText : comment with @Common.Label: 'Reason for rejection';
+annotate service.inText : comment with @UI.MultiLineText: true;

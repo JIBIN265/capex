@@ -200,7 +200,6 @@ entity StatusValues: cuid, managed, {
       insertPossible : Boolean default false;
       updatePossible : Boolean default false;
 }
-
 entity CapexEntity : cuid, managed, CapexMain, DocumentId, messageImport {
 
   @description: 'Cash Flow Year Composition'
