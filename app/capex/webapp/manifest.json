@@ -434,6 +434,27 @@
                         }
                       ]
                     }
+                  },
+                  "actions": {
+                    "viewpdf": {
+                      "press": "capex.ext.controller.Viewpdf.viewpdf",
+                      "visible": true,
+                      "enabled": true,
+                      "requiresSelection": true,
+                      "text": "View PDF"
+                    }
+                  }
+                },
+                "attachments/@com.sap.vocabularies.UI.v1.LineItem": {
+                  "actions": {
+                    "viewpdf": {
+                      "press": "capex.ext.fragment.Viewpdf.viewpdf",
+                      "visible": true,
+                      "enableOnSelect": "single",
+                      "enabled": true,
+                      "requiresSelection": true,
+                      "text": "View PDF"
+                    }
                   }
                 }
               },

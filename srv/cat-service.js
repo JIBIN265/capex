@@ -400,6 +400,39 @@ class CapexCatalogService extends cds.ApplicationService {
         this.after('SAVE', Capex, async (_, req) => {
             console.log(req.data);
 
+
+            try {
+              //  const { CapexEntity } = this.entities;
+
+                // Fetch the CapexEntity with its attachments using expand
+                const capex = await SELECT.one.from(Capex)
+                    .where({ ID: req.data.ID });
+
+                // const url = req.data.url;
+                // const mediaObj = attachments.findOne({ url });
+
+                if (attachments && attachments.length > 0) {
+                    const attachment = attachments[0];
+                    fileName = attachment.name;
+
+                    // Read the file content
+                    if (attachment.content instanceof Buffer) {
+                        fileContent = attachment.content.toString('base64');
+                    } else if (typeof attachment.content === 'function') {
+                        const stream = attachment.content();
+                        fileContent = await new Promise((resolve, reject) => {
+                            const chunks = [];
+                            stream.on('data', (chunk) => chunks.push(chunk));
+                            stream.on('error', reject);
+                            stream.on('end', () => resolve(Buffer.concat(chunks).toString('base64')));
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching or processing attachment:', error);
+            }
+
+
             let testData = {
                 "definitionId": "us10.yk2lt6xsylvfx4dz.zcapexworkflow.triggerWorkflow",
                 "context": {
