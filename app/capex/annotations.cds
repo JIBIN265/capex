@@ -663,3 +663,48 @@ annotate service.Capex with @(UI.LineItem: {
 },
 
 );
+
+annotate service.Capex with @(
+    UI.SelectionVariant #SelectionVariantAll    : {
+        Text         : 'All Orders',
+        ID           : 'SelectionVariantAll',
+        SelectOptions: [{PropertyName: status}]
+    },
+    UI.SelectionVariant #SelectionVariantApproved : {
+        ID           : 'SelectionVariantApproved',
+        Text         : 'Approved',
+        SelectOptions: [ 
+        {
+            PropertyName: status,
+            Ranges      : [{
+                Sign  : #I,
+                Option: #EQ,
+                Low   : 'E0009',
+            }, ],
+        }, ],
+    },
+    UI.SelectionVariant #SelectionVariantFinal: {
+        ID           : 'SelectionVariantFinal',
+        Text         : 'Rejected Final',
+        SelectOptions: [{
+            PropertyName: status,
+            Ranges      : [{
+                Sign  : #I,
+                Option: #EQ,
+                Low   : 'E0010',
+            }, ],
+        }, ],
+    },
+     UI.SelectionVariant #SelectionVariantIncomplete: {
+        ID           : 'SelectionVariantIncomplete',
+        Text         : 'Rejected Incomplete',
+        SelectOptions: [{
+            PropertyName: status,
+            Ranges      : [{
+                Sign  : #I,
+                Option: #EQ,
+                Low   : 'E0011',
+            }, ],
+        }, ],
+    },
+);

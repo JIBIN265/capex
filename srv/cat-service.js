@@ -202,7 +202,7 @@ class CapexCatalogService extends cds.ApplicationService {
 
         this.on('getStatusCount', async (req) => {
             try {
-                const statusKeys = ['N', 'X', 'I', 'D', 'R', 'A']; // Example status keys
+                const statusKeys = ['N', 'X', 'E0011', 'D', 'E0010', 'E0009']; // Example status keys
                 const statusCount = await getStatusCounts(statusKeys);
 
                 return statusCount;
@@ -218,10 +218,10 @@ class CapexCatalogService extends cds.ApplicationService {
             const keyMappings = {
                 'N': 'inProgressCount',
                 'X': 'Count',
-                'I': 'rejectIncompleteCount',
+                'E0011': 'rejectIncompleteCount',
                 'D': 'draftCount',
-                'R': 'rejectFinalCount',
-                'A': 'approvedCount'
+                'E0010': 'rejectFinalCount',
+                'E0009': 'approvedCount'
             };
 
             const statusCount = {};

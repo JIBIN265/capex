@@ -328,7 +328,25 @@
                     "enableExport": true,
                     "selectAll": true,
                     "enablePaste": true,
-                    "condensedTableLayout": true
+                    "condensedTableLayout": true,
+                    "quickVariantSelection": {
+                      "hideTableTitle": false,
+                      "showCounts": true,
+                      "paths": [
+                        {
+                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantAll"
+                        },
+                        {
+                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantApproved"
+                        },
+                        {
+                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantFinal"
+                        },
+                        {
+                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantIncomplete"
+                        }
+                      ]
+                    }
                   },
                   "actions": {
                     "MenuActions": {
