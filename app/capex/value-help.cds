@@ -1,4 +1,6 @@
 using CapexCatalogService as service from '../../srv/cat-service';
+using from './annotations';
+
 
 annotate service.Capex with {
     status      @(Common: {
@@ -128,3 +130,60 @@ annotate service.Capex with {
     }, });
 
 };
+annotate service.Capex with @(
+    UI.SelectionPresentationVariant #table : {
+        $Type : 'UI.SelectionPresentationVariantType',
+        PresentationVariant : {
+            $Type : 'UI.PresentationVariantType',
+            Visualizations : [
+                '@UI.LineItem',
+            ],
+            SortOrder : [
+                {
+                    $Type : 'Common.SortOrderType',
+                    Property : documentID,
+                    Descending : false,
+                },
+            ],
+        },
+        SelectionVariant : {
+            $Type : 'UI.SelectionVariantType',
+            SelectOptions : [
+            ],
+        },
+        Text : 'Table View 0',
+    },
+    Analytics.AggregatedProperty #documentID_countdistinct : {
+        $Type : 'Analytics.AggregatedPropertyType',
+        Name : 'documentID_countdistinct',
+        AggregatableProperty : documentID,
+        AggregationMethod : 'countdistinct',
+        ![@Common.Label] : 'documentID (Count Distinct Values)',
+    },
+    UI.Chart #chartView : {
+        $Type : 'UI.ChartDefinitionType',
+        ChartType : #Column,
+        Dimensions : [
+            status,
+        ],
+        DynamicMeasures : [
+            '@Analytics.AggregatedProperty#documentID_countdistinct',
+        ],
+    },
+    UI.SelectionPresentationVariant #chartView : {
+        $Type : 'UI.SelectionPresentationVariantType',
+        PresentationVariant : {
+            $Type : 'UI.PresentationVariantType',
+            Visualizations : [
+                '@UI.Chart#chartView',
+            ],
+        },
+        SelectionVariant : {
+            $Type : 'UI.SelectionVariantType',
+            SelectOptions : [
+            ],
+        },
+        Text : 'Chart View',
+    }
+);
+

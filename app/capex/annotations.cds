@@ -913,6 +913,30 @@ annotate service.Capex with @(
     },
 );
 
+annotate service.Capex with @Aggregation.ApplySupported: {
+    Transformations       : [
+        'aggregate',
+        'topcount',
+        'bottomcount',
+        'identity',
+        'concat',
+        'groupby',
+        'filter',
+        'expand',
+        'search'
+    ],
+    Rollup                : #None,
+    PropertyRestrictions  : true,
+    GroupableProperties   : [
+        orderNumber,
+        status,
+        site,
+        orderType,
+        division
+    ],
+    AggregatableProperties: [{Property: documentID, }],
+};
+
 annotate service.Capex with @(
     UI.Chart #bulletChart: {
         //Search-Terms: #MicroChart, #microChartBullet

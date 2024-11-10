@@ -92,7 +92,8 @@
         "sap.ui.core": {},
         "sap.ushell": {},
         "sap.fe.templates": {},
-        "sap.f": {}
+        "sap.f": {},
+        "sap.fe.core": {}
       }
     },
     "contentDensities": {
@@ -159,6 +160,15 @@
             "CapexList",
             "CapexObjectPage",
             "CashFlowYearObjectPage"
+          ]
+        },
+        {
+          "name": "AttachmentsViewPdfPagePage",
+          "pattern": "Capex({key})/attachments({attachmentsKey}):?query:",
+          "target": [
+            "CapexList",
+            "CapexObjectPage",
+            "AttachmentsViewPdfPagePage"
           ]
         }
       ],
@@ -328,25 +338,7 @@
                     "enableExport": true,
                     "selectAll": true,
                     "enablePaste": true,
-                    "condensedTableLayout": true,
-                    "quickVariantSelection": {
-                      "hideTableTitle": false,
-                      "showCounts": true,
-                      "paths": [
-                        {
-                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantAll"
-                        },
-                        {
-                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantApproved"
-                        },
-                        {
-                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantFinal"
-                        },
-                        {
-                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SelectionVariantIncomplete"
-                        }
-                      ]
-                    }
+                    "condensedTableLayout": true
                   },
                   "actions": {
                     "MenuActions": {
@@ -368,7 +360,23 @@
                   }
                 }
               },
-              "defaultTemplateAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionPresentationVariant#table"
+              "views": {
+                "paths": [
+                  {
+                    "primary": [
+                      {
+                        "annotationPath": "com.sap.vocabularies.UI.v1.Chart#chartView"
+                      }
+                    ],
+                    "secondary": [
+                      {
+                        "annotationPath": "com.sap.vocabularies.UI.v1.SelectionPresentationVariant#table"
+                      }
+                    ],
+                    "defaultPath": "both"
+                  }
+                ]
+              }
             }
           },
           "controlAggregation": "beginColumnPages",
@@ -388,6 +396,11 @@
                 "to_CashFlowYear": {
                   "detail": {
                     "route": "CashFlowYearObjectPage"
+                  }
+                },
+                "attachments": {
+                  "detail": {
+                    "route": "AttachmentsViewPdfPagePage"
                   }
                 }
               },
@@ -523,6 +536,19 @@
           },
           "controlAggregation": "endColumnPages",
           "contextPattern": "/Capex({key})/to_CashFlowYear({key2})"
+        },
+        "AttachmentsViewPdfPagePage": {
+          "type": "Component",
+          "id": "AttachmentsViewPdfPagePage",
+          "name": "sap.fe.core.fpm",
+          "controlAggregation": "endColumnPages",
+          "options": {
+            "settings": {
+              "viewName": "capex.ext.view.ViewPdfPage",
+              "contextPath": "/Capex/attachments"
+            }
+          },
+          "contextPattern": "/Capex({key})/attachments({attachmentsKey})"
         }
       }
     },
