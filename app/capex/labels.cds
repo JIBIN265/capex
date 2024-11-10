@@ -57,8 +57,6 @@ annotate service.Objectives with {
     objectiveTarget  @title: '{i18n>objectiveTarget}'  @UI.Placeholder: '{i18n>placeHolderObjectiveTarget}';
     impact           @title: '{i18n>impact}'           @UI.Placeholder: '{i18n>placeHolderImpact}';
     amount           @title: '{i18n>amount}'           @UI.Placeholder: '{i18n>placeHolderAmount}';
-
-
 }
 
 annotate service.CashFlowYear with {
@@ -68,8 +66,6 @@ annotate service.CashFlowYear with {
     cashFlowQThree  @title: '{i18n>cashFlowQThree}'  @UI.Placeholder: '{i18n>placeHolderCashFlowQThree}';
     cashFlowQFour   @title: '{i18n>cashFlowQFour}'   @UI.Placeholder: '{i18n>placeHolderCashFlowQFour}';
     total           @title: '{i18n>total}'           @UI.Placeholder: '{i18n>placeHolderTotal}';
-
-
 }
 // annotate service.Languages with {
 //     code  @title: '{i18n>unitCode}'  @Common.Text: name  @Common.TextArrangement: #TextOnly
@@ -90,3 +86,8 @@ annotate service.Cot001Set with {
     Butxt @title: '{i18n>companyCodeDescription}';
     Waers @title: '{i18n>currency}'
 };
+
+annotate service.Notes with {
+    recipient  @title: '{i18n>recipient}'  @UI.Placeholder: '{i18n>placeHolderRecipient}';
+    text       @title: '{i18n>text}'       @UI.Placeholder: '{i18n>placeHolderText}';
+}

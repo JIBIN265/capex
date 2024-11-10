@@ -290,28 +290,28 @@ annotate service.Capex with @(
             ID    : 'Objectives',
             Target: 'to_Objectives/@UI.LineItem#Objectives',
         },
-    // {
-    //     $Type : 'UI.CollectionFacet',
-    //     ID    : 'CapexNotesId',
-    //     Label : '{i18n>notes}',
-    //     Facets: [{
-    //         $Type : 'UI.ReferenceFacet',
-    //         Target: '@UI.FieldGroup#Notes',
-    //         ID    : 'CapexpReferenceNotesId',
-    //         Label : ''
-    //     }, ],
-    // },
-    //  {
-    //     $Type : 'UI.CollectionFacet',
-    //     ID    : 'CapexTestId',
-    //     Label : '{i18n>notes2}',
-    //     Facets: [{
-    //         $Type : 'UI.ReferenceFacet',
-    //         Target: 'to_Comments/@UI.LineItem',
-    //         ID    : 'CapexpReferenceTestId',
-    //         Label : ''
-    //     }, ],
-    // }
+        // {
+        //     $Type : 'UI.CollectionFacet',
+        //     ID    : 'CapexNotesId',
+        //     Label : '{i18n>notes}',
+        //     Facets: [{
+        //         $Type : 'UI.ReferenceFacet',
+        //         Target: '@UI.FieldGroup#Notes',
+        //         ID    : 'CapexpReferenceNotesId',
+        //         Label : ''
+        //     }, ],
+        // },
+        {
+            $Type : 'UI.CollectionFacet',
+            ID    : 'CapexTestId',
+            Label : '{i18n>notes2}',
+            Facets: [{
+                $Type : 'UI.ReferenceFacet',
+                Target: 'to_Notes/@UI.LineItem',
+                ID    : 'CapexpReferenceNotesId',
+                Label : ''
+            }, ],
+        }
 
     ],
     UI.Identification                     : [
@@ -429,6 +429,34 @@ annotate service.Comments with @(UI.LineItem: [
 
 ]);
 
+annotate service.Notes with @(UI.LineItem: [
+    {
+        $Type: 'UI.DataField',
+        Value: recipient,
+    },
+    {
+        $Type: 'UI.DataField',
+        Value: text,
+    },
+    {
+        //Action as a column of the table
+        //Icons only supported for inline actions / intend based navigation
+        $Type  : 'UI.DataFieldForAction',
+        Action : 'service.changeProgress',
+        Label  : 'Send Email',
+        IconUrl: 'sap-icon://command-line-interfaces',
+        Inline : true,
+    },
+    {
+        $Type: 'UI.DataField',
+        Value: createdBy,
+    },
+    {
+        $Type: 'UI.DataField',
+        Value: createdAt,
+    },
+]);
+
 annotate service.Objectives with @(UI.LineItem #Objectives: [
     {
         $Type                  : 'UI.DataField',
@@ -524,6 +552,50 @@ annotate service.Capex with @(UI.HeaderFacets: [
         Label : '{i18n>orderNumber}',
 
     },
+    // {
+    //     $Type : 'UI.CollectionFacet',
+    //     Facets: [
+
+    //     {
+    //         $Type : 'UI.ReferenceFacet',
+    //         Target: '@UI.Chart#bulletChart',
+    //     }, ],
+    // },
+    {
+        $Type : 'UI.CollectionFacet',
+        ID    : 'CollectionFacet1',
+        Facets: [
+                 // {
+                 //     //Search-Term: #DataPoint
+                 //     $Type : 'UI.ReferenceFacet',
+                 //     Target: '@UI.DataPoint#ratingIndicator',
+                 // },
+                {
+            //Search-Term: #DataPoint
+            $Type : 'UI.ReferenceFacet',
+            Label : 'Approval Status',
+            Target: '@UI.DataPoint#progressIndicator2',
+        },
+
+        ],
+    },
+// {
+//     $Type : 'UI.CollectionFacet',
+//     ID    : 'CollectionFacet2',
+//     Facets: [
+
+//     {
+//         $Type : 'UI.ReferenceFacet',
+//         Target: '@UI.Chart#radialChart',
+//     }, ],
+// },
+
+
+// {
+//     //Search-Term: #OPMicroChart
+//     $Type : 'UI.ReferenceFacet',
+//     Target: '@UI.Chart#harveyChart',
+// },
 //   {
 //         $Type : 'UI.CollectionFacet',
 //         ID    : 'HeaderCollection3FacetId',
@@ -597,6 +669,39 @@ annotate service.Capex with @(UI.LineItem: {
             ![@UI.Importance]    : #High,
             ![@HTML5.CssDefaults]: {width: '25%'}
         },
+        // {
+        //     //Search-Term: #MicroChart
+        //     $Type : 'UI.DataFieldForAnnotation',
+        //     Target: '@UI.Chart#radialChart',
+        //     Label : '{i18n>radialChart}',
+        // },
+        // {
+        //     //Search-Term: #ProgressIndicator
+        //     $Type            : 'UI.DataFieldForAnnotation', //Added progress indicator to table
+        //     Label            : '{i18n>progressIndicator}',
+        //     Target           : '@UI.DataPoint#progressIndicator2',
+        //     ![@UI.Importance]: #Low,
+        // },
+        {
+            $Type            : 'UI.DataFieldForAnnotation',
+            Label            : '{i18n>progressIndicator}',
+            Target           : '@UI.DataPoint#progressIndicator',
+            ![@UI.Importance]: #Low,
+        },
+        // {
+        //     //Search-Term: #RatingIndicator
+        //     $Type            : 'UI.DataFieldForAnnotation', //Added rating indicator to table
+        //     Label            : '{i18n>ratingIndicator}',
+        //     Target           : '@UI.DataPoint#ratingIndicator',
+        //     ![@UI.Importance]: #Low,
+        // },
+        // {
+        //     //Search-Term: #MicroChart
+        //     $Type            : 'UI.DataFieldForAnnotation',
+        //     Label            : '{i18n>bulletChart}',
+        //     Target           : '@UI.Chart#bulletChart',
+        //     ![@UI.Importance]: #High,
+        // },
         {
             $Type: 'UI.DataField',
             Value: orderType,
@@ -628,7 +733,7 @@ annotate service.Capex with @(UI.LineItem: {
         //     Action: 'CapexCatalogService.rejectFinal',
         //     Label : '{i18n>rejectFinal}',
         // },
-         {
+        {
             $Type : 'UI.DataFieldForAction',
             Action: 'CapexCatalogService.rejectFinal2',
             Label : '{i18n>rejectFinal}',
@@ -739,3 +844,114 @@ annotate service.Capex with @(
 //         Visualizations: ['@UI.LineItem#simplified', ],
 //     },
 // }, );
+// annotate service.Capex with @(
+//     UI.DataPoint #progressIndicator : {
+//         Value : 3,
+//         TargetValue : 100,
+//         Visualization : #Progress,
+//         Title : '{i18n>progressIndicator}',
+//         //Criticality: criticality,
+//     },
+
+// );
+
+// annotate service.Capex with @(
+
+//     UI.DataPoint #radialChart : {
+//         Value : 2,
+//         TargetValue : 5,
+//         Criticality : 2,
+//     },
+
+// );
+annotate service.Capex with @(
+    UI.DataPoint #progressIndicator2: {
+        //Search-Term: #ProgressIndicator
+        Value        : integerValue,
+        TargetValue  : 5,
+        Visualization: #Progress,
+        Title        : '{i18n>progressIndicator}',
+    //Criticality   : criticality, //> optional criticality
+    },
+    UI.DataPoint #ratingIndicator   : {
+        //Search-Term: #RatingIndicator
+        Value               : starsValue, //Amount of stars, which are filled. Values between x.25 and x.74 are displaced as a half star.
+        TargetValue         : 4, //Max amount of stars
+        Visualization       : #Rating,
+        Title               : '{i18n>ratingIndicator}',
+        ![@Common.QuickInfo]: 'Tooltip via Common.QuickInfo',
+    },
+    UI.DataPoint #bulletChart       : {
+        //Search-Terms: #MicroChart, #microChartBullet
+        Value        : integerValue, //horizontal bar in relation to the goal line
+        TargetValue  : targetValue, //visual goal line in the UI
+        ForecastValue: forecastValue, //horizontal bar behind the value bar with, slightly larger with higher transparency
+        Criticality  : to_Status.criticality, //> optional criticality
+        MinimumValue : 0, //Minimal value, needed for output rendering
+    },
+    UI.DataPoint #radialChart       : {
+        //Search-Terms: #MicroChart, #microChartRadial
+        Value      : integerValue,
+        TargetValue: targetValue, //The relation between the value and the target value will be displayed as a percentage
+        Criticality: to_Status.criticality, //> optional criticality
+    },
+    UI.DataPoint #harveyChart       : {
+        //Search-Term: #microChartHarvey
+        Value       : fieldWithPrice,
+        MaximumValue: fieldWithUoM, //MaximumValue needs to be of type Decimal
+        Criticality : to_Status.criticality
+    },
+    UI.DataPoint #fieldWithPrice    : {
+        //Search-Term: #KeyValue
+        Value: fieldWithPrice,
+        Title: '{i18n>fieldWithPrice}',
+    },
+    UI.DataPoint #fieldWithTooltip  : {
+        //Search-Term: #ToolTip
+        Value               : dimensions,
+        ![@Common.QuickInfo]: '{i18n>Tooltip}', //Can also be a dynamic property path
+    },
+);
+
+annotate service.Capex with @(
+    UI.Chart #bulletChart: {
+        //Search-Terms: #MicroChart, #microChartBullet
+        Title            : '{i18n>bulletChart}',
+        Description      : '{i18n>ThisIsAMicroChart}',
+        ChartType        : #Bullet,
+        Dimensions       : [dimensions],
+        Measures         : [integerValue],
+        MeasureAttributes: [{
+            $Type    : 'UI.ChartMeasureAttributeType',
+            Measure  : integerValue,
+            Role     : #Axis1,
+            DataPoint: '@UI.DataPoint#bulletChart',
+        }, ],
+    },
+    UI.Chart #radialChart: {
+        //Search-Terms: #MicroChart, #microChartRadial
+        Title            : '{i18n>radialChart}',
+        Description      : '{i18n>ThisIsAMicroChart}',
+        ChartType        : #Donut,
+        Measures         : [integerValue],
+        MeasureAttributes: [{
+            $Type    : 'UI.ChartMeasureAttributeType',
+            Measure  : integerValue,
+            Role     : #Axis1,
+            DataPoint: '@UI.DataPoint#radialChart',
+        }, ],
+    },
+    UI.Chart #harveyChart: {
+        //Search-Term: #microChartHarvey
+        Title            : '{i18n>harveyChart}',
+        Description      : '{i18n>ThisIsAMicroChart}',
+        ChartType        : #Pie,
+        Measures         : [fieldWithPrice],
+        MeasureAttributes: [{
+            $Type    : 'UI.ChartMeasureAttributeType',
+            Measure  : fieldWithPrice,
+            Role     : #Axis1,
+            DataPoint: '@UI.DataPoint#harveyChart',
+        }]
+    },
+);

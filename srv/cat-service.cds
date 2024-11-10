@@ -67,11 +67,17 @@ service CapexCatalogService @(requires: 'authenticated-user') {
             }
         };
 
-    entity Comments              as projection on persistence.CapexEntity.to_Comments;
+    entity Comments              as projection on persistence.CapexEntity.to_Comments
+        actions {
+
+            action changeProgress(in : $self) returns Comments
+        };
+
     entity CashFlowYear          as projection on persistence.CapexEntity.to_CashFlowYear;
     entity Objectives            as projection on persistence.CapexEntity.to_Objectives;
     entity RejectionReasons      as projection on persistence.CapexEntity.to_RejectionReasons;
     entity Attachments           as projection on persistence.CapexEntity.attachments;
+    entity Notes                 as projection on persistence.CapexEntity.to_Notes;
 
     @readonly
     entity CompanyCode           as projection on persistence.CompanyCode;

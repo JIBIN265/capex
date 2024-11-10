@@ -5,6 +5,9 @@ const { data } = require("@sap/cds/lib/dbs/cds-deploy");
 const defaults = require("dotenv").config({
     path: "./srv/defaults/sap-defaults.env",
 });
+const { executeHttpRequest } = require("@sap-cloud-sdk/http-client");
+const FormData = require("form-data");
+
 class CapexCatalogService extends cds.ApplicationService {
     async init() {
         const {
@@ -320,19 +323,69 @@ class CapexCatalogService extends cds.ApplicationService {
             console.log("Calculated total:", req.data.total);
         });
 
+        //added on sep 20
+        const uploadToDMS = async (file, filename, mimeType) => {
+            try {
+                const formData = new FormData();
+                formData.append("file", file, { filename });
+
+                // Fetch destination
+                const destinationName = "KrugerDocuments"; // Your destination name in package.json
+                const dmsURL = "/root/Internal Orders"; // Path to the folder in DMS
+
+                const uploadResponse = await executeHttpRequest(
+                    { destinationName },
+                    {
+                        method: "POST",
+                        url: dmsURL,
+                        headers: {
+                            "Content-Type": mimeType,
+                        },
+                        data: formData,
+                    }
+                );
+
+                return uploadResponse.data.uri; // Return file URI
+            } catch (error) {
+                console.error("Error uploading file to DMS: ", error);
+                throw new Error("File upload to SAP DMS failed");
+            }
+        };
+
+
         this.before('SAVE', Capex, async req => {
+            const { attachments } = req.data;
+
+            if (attachments && attachments.length > 0) {
+                const attachment = attachments[0]; // Assuming one file per entity
+                const { filename, mimeType } = attachment;
+                const content = await attachment.content.load();
+
+                // Upload the file to DMS
+                const fileUri = await uploadToDMS(content, filename, mimeType);
+                req.data.documentURI = fileUri; // Save the file URI
+            } else {
+                req.error(400, "No attachment provided");
+            }
+            //end of sep20
+
             // console.log(req.event)
             if (!req.event === 'CREATE' && !req.event === 'UPDATE') { return; }  //only calculate if create or update
             const {
                 ID,
                 totalCost,
-                amount
+                amount,
+                //attachments
             } = req.data;
-
+            if (!attachments || attachments.length === 0) {
+                req.error(400, `Please add an attachment`, `in/attachments`);
+            }
             if (totalCost > amount) {
                 req.error(400, `TOTALCOST`, `in/amount`, [totalCost, amount]);
             }
-
+            if (totalCost > amount) {
+                req.error(400, `TOTALCOST`, `in/amount`, [totalCost, amount]);
+            }
             const record = await db.run(SELECT.one.from(Capex).where({ ID: ID }));
 
             if (req.errors) { req.reject(); }
@@ -342,7 +395,9 @@ class CapexCatalogService extends cds.ApplicationService {
             // Delete unnecessary fields
             const fieldsToDelete = [
                 'currency_code', 'to_CashFlowYear', 'to_Objectives', 'attachments', 'to_RejectionReasons',
-                'ID', 'status', 'documentID', 'notes', 'numericSeverity', 'to_Comments', 'downtime', 'appropriationLife'
+                'ID', 'status', 'documentID', 'notes', 'numericSeverity', 'to_Comments', 'downtime', 'appropriationLife',
+                'targetDate', 'integerValue', 'forecastValue', 'targetValue', 'dimensions', 'fieldWithPrice', 'starsValue', 'fieldWithUoM'
+
             ];
             fieldsToDelete.forEach(field => delete data[field]);
 
@@ -400,37 +455,37 @@ class CapexCatalogService extends cds.ApplicationService {
         this.after('SAVE', Capex, async (_, req) => {
             console.log(req.data);
 
+            // try {
+            //  const { CapexEntity } = this.entities;
 
-            try {
-              //  const { CapexEntity } = this.entities;
+            // Fetch the CapexEntity with its attachments using expand
+            //var sPdfContentUrl = oContext.getProperty("content");
+            //     const capex = await SELECT.one.from(Capex)
+            //         .where({ ID: req.data.ID });
 
-                // Fetch the CapexEntity with its attachments using expand
-                const capex = await SELECT.one.from(Capex)
-                    .where({ ID: req.data.ID });
+            //     // const url = req.data.url;
+            //     // const mediaObj = attachments.findOne({ url });
 
-                // const url = req.data.url;
-                // const mediaObj = attachments.findOne({ url });
+            //     if (attachments && attachments.length > 0) {
+            //         const attachment = attachments[0];
+            //         fileName = attachment.name;
 
-                if (attachments && attachments.length > 0) {
-                    const attachment = attachments[0];
-                    fileName = attachment.name;
-
-                    // Read the file content
-                    if (attachment.content instanceof Buffer) {
-                        fileContent = attachment.content.toString('base64');
-                    } else if (typeof attachment.content === 'function') {
-                        const stream = attachment.content();
-                        fileContent = await new Promise((resolve, reject) => {
-                            const chunks = [];
-                            stream.on('data', (chunk) => chunks.push(chunk));
-                            stream.on('error', reject);
-                            stream.on('end', () => resolve(Buffer.concat(chunks).toString('base64')));
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching or processing attachment:', error);
-            }
+            //         // Read the file content
+            //         if (attachment.content instanceof Buffer) {
+            //             fileContent = attachment.content.toString('base64');
+            //         } else if (typeof attachment.content === 'function') {
+            //             const stream = attachment.content();
+            //             fileContent = await new Promise((resolve, reject) => {
+            //                 const chunks = [];
+            //                 stream.on('data', (chunk) => chunks.push(chunk));
+            //                 stream.on('error', reject);
+            //                 stream.on('end', () => resolve(Buffer.concat(chunks).toString('base64')));
+            //             });
+            //         }
+            //     }
+            // } catch (error) {
+            //     console.error('Error fetching or processing attachment:', error);
+            // }
 
 
             let testData = {
@@ -569,7 +624,7 @@ class CapexCatalogService extends cds.ApplicationService {
 
             } catch (error) {
                 if (error.code) {
-                   let errorMessage = error.message || "An exception was raised.";
+                    let errorMessage = error.message || "An exception was raised.";
 
                     // Extract more detailed error information if available
                     if (error.innerError && error.innerError.errordetails) {
@@ -628,6 +683,7 @@ class CapexCatalogService extends cds.ApplicationService {
             const newStatus = "E0011";
             await statusChange(req, ID, newStatus);
         });
+
 
         return super.init();
     }

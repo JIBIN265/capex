@@ -1,7 +1,7 @@
 _schema-version: "3.1"
 ID: capex
 description: Capex
-version: 1.0.0
+version: 1.0.1
 modules:
 - name: capex-srv
   type: nodejs
@@ -13,6 +13,7 @@ modules:
   - name: capex-connectivity
   - name: capex-destination-service
   - name: capex-attachments
+  - name: capex-malwarescanner
   provides:
   - name: srv-api
     properties:
@@ -189,6 +190,12 @@ resources:
   parameters:
     service: objectstore
     service-plan: standard
+- name: capex-malwarescanner
+  type: org.cloudfoundry.managed-service
+  parameters:
+      service: malware-scanner
+      service-name: capex-malwarescanner
+      service-plan: clamav
 parameters:
   deploy_mode: html5-repo
   enable-parallel-deployments: true

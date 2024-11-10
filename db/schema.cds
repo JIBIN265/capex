@@ -53,6 +53,13 @@ entity Site : CodeList {
 }
 
 aspect CapexMain {
+  integerValue         : Integer default 2;
+  forecastValue        : Integer;
+  targetValue          : Integer default 30;
+  dimensions           : Integer;
+  fieldWithPrice       : Decimal(12, 3);
+  starsValue           : Decimal;
+  fieldWithUoM         : Decimal(15, 3);
 
   @description: 'Order Number'
   orderNumber          : String(12); // AUFNR
@@ -185,14 +192,17 @@ aspect CapexMain {
   status               : String(5);
 
   @description: 'Stonr'
-  stonr               : String(3);
+  stonr                : String(3);
+
+  @description: 'Targeted Approval Date'
+  targetDate           : Date;
 
   @description: 'Status Value Association'
   to_Status            : Association to one StatusValues
                            on to_Status.code = status;
 }
 
-entity StatusValues: cuid, managed, {
+entity StatusValues : cuid, managed, {
   key code           : String(5);
       value          : String(20);
       criticality    : Integer default 0;
@@ -200,6 +210,7 @@ entity StatusValues: cuid, managed, {
       insertPossible : Boolean default false;
       updatePossible : Boolean default false;
 }
+
 entity CapexEntity : cuid, managed, CapexMain, DocumentId, messageImport {
 
   @description: 'Cash Flow Year Composition'
@@ -215,7 +226,10 @@ entity CapexEntity : cuid, managed, CapexMain, DocumentId, messageImport {
   to_Comments         : Composition of many Comments;
 
   @description: 'Attachments Composition'
-  attachments      : Composition of many Attachments;
+  attachments         : Composition of many Attachments;
+
+  @description: 'Comments Composition'
+  to_Notes            : Composition of many Notes;
 };
 
 aspect Comments : cuid, managed {
@@ -223,6 +237,13 @@ aspect Comments : cuid, managed {
   icon : String default '![sap-icon://account]';
   info : String;
   text : String;
+
+}
+
+aspect Notes : cuid, managed {
+
+  recipient : User;
+  text      : String(1000);
 
 }
 
